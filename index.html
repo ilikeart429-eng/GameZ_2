@@ -1,10 +1,118 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>GameZ_2</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>GameZ_2</title>
+
+<style>
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0f0f0f;
+color:white;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+text-align:center;
+width:90%;
+max-width:900px;
+}
+
+h1{
+font-size:70px;
+margin-bottom:10px;
+}
+
+.subtitle{
+color:#999;
+margin-bottom:50px;
+}
+
+.games{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:#1a1a1a;
+padding:30px;
+border-radius:20px;
+cursor:pointer;
+transition:0.3s;
+border:2px solid #2a2a2a;
+}
+
+.card:hover{
+transform:translateY(-5px);
+border-color:white;
+}
+
+.card h2{
+margin-bottom:10px;
+}
+</style>
 </head>
+
 <body>
-  <h1>GameZ_2</h1>
-  <p>Hello world!</p>
+
+<div class="container">
+
+<h1>GameZ_2</h1>
+
+<p class="subtitle">
+Interactive games inspired by Neal.fun
+</p>
+
+<div class="games">
+
+<div class="card" onclick="openGame('button')">
+<h2>🎯 Don't Click The Button</h2>
+<p>Each click makes things worse.</p>
+</div>
+
+<div class="card" onclick="openGame('ai')">
+<h2>🤖 Annoying AI</h2>
+<p>An AI that refuses to help.</p>
+</div>
+
+<div class="card" onclick="openGame('time')">
+<h2>🌌 Time Explorer</h2>
+<p>Travel through history.</p>
+</div>
+<script>
+
+function openGame(game){
+
+if(game==="button"){
+alert("Don't Click The Button - Coming Soon");
+}
+
+if(game==="ai"){
+alert("Annoying AI - Coming Soon");
+}
+
+if(game==="time"){
+alert("Time Explorer - Coming Soon");
+}
+
+}
+
+</script>
+
 </body>
 </html>
+</div>
+
+</div>
