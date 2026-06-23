@@ -1,97 +1,162 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Don't Click The Button</title>
 
 <style>
+
 body{
 margin:0;
+font-family:Arial,sans-serif;
 height:100vh;
+overflow:hidden;
 display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-font-family:Arial,sans-serif;
 transition:1s;
 background:white;
 }
 
-h1{
-margin-bottom:20px;
+#message{
+font-size:32px;
+text-align:center;
+max-width:700px;
+padding:20px;
 }
 
-button{
-font-size:30px;
+#button{
 padding:20px 40px;
+font-size:30px;
+cursor:pointer;
 border:none;
 border-radius:15px;
-cursor:pointer;
+margin-top:20px;
 }
 
 #counter{
 margin-top:20px;
 font-size:24px;
 }
+
+#endingBox{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:black;
+color:white;
+display:none;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+font-size:30px;
+text-align:center;
+z-index:999;
+}
+
 </style>
+
 </head>
 
 <body>
 
-<h1 id="message">Don't Click The Button</h1>
+<div id="message">Don't click the button.</div>
 
-<button onclick="clicked()">
-DON'T CLICK
-</button>
+<button id="button" onclick="clicked()">DON'T CLICK</button>
 
-<div id="counter">
-Clicks: 0
+<div id="counter">Clicks: 0</div>
+
+<div id="endingBox">
+<h1 id="endingTitle"></h1>
+<p id="endingText"></p>
 </div>
 
 <script>
 
 let clicks = 0;
+let narratorGone = false;
+
+const message = document.getElementById("message");
+
+const weirdTexts = [
+"STOP","WHY","...","PLEASE","GO AWAY","ENOUGH","DON'T","LEAVE","WHY ARE YOU HERE"
+];
+
+function updateCounter(){
+document.getElementById("counter").innerText = "Clicks: " + clicks;
+}
+
+function darken(){
+let darkness = Math.min(clicks * 2, 255);
+document.body.style.background = `rgb(${255-darkness},${255-darkness},${255-darkness})`;
+
+if(clicks > 80){
+document.body.style.color = "white";
+}
+}
+
+function narratorStory(){
+
+if(clicks===1) message.innerText="Why did you click it?";
+if(clicks===5) message.innerText="I literally told you not to.";
+if(clicks===10) message.innerText="Maybe you misread the instructions.";
+if(clicks===20) message.innerText="You're enjoying this, aren't you?";
+if(clicks===40) message.innerText="Nobody ever listens.";
+if(clicks===60) message.innerText="What's the point of asking?";
+if(clicks===80) message.innerText="I knew this would happen.";
+if(clicks===100) message.innerText="I've run out of things to say.";
+if(clicks===120) message.innerText="...";
+if(clicks===150) message.innerText="I'm tired.";
+if(clicks===200) message.innerText="Goodbye.";
+
+if(clicks===220){
+message.style.display = "none";
+narratorGone = true;
+}
+}
+
+function unlockEnding(title, text){
+document.getElementById("endingTitle").innerText = title;
+document.getElementById("endingText").innerText = text;
+document.getElementById("endingBox").style.display = "flex";
+}
+
+function checkEndings(){
+
+if(clicks===50) unlockEnding("Ending 1 - Persistent","You ignored every warning.");
+if(clicks===100) unlockEnding("Ending 2 - Unstoppable","The narrator is losing hope.");
+if(clicks===220) unlockEnding("Ending 3 - Goodbye","The narrator left.");
+if(clicks===500) unlockEnding("Ending 4 - Alone","You kept clicking anyway.");
+if(clicks===1000) unlockEnding("Ending 5 - Obsession","This is becoming a lifestyle.");
+if(clicks===2000) unlockEnding("Ending 6 - Still Here","You never stopped.");
+if(clicks===5000) unlockEnding("Ending 7 - Watcher","You've seen things few players see.");
+if(clicks===10000) unlockEnding("Ending 8 - Endless","The button has accepted its fate.");
+if(clicks===25000) unlockEnding("Ending 9 - Beyond","Why are you still clicking?");
+if(clicks===50000) unlockEnding("Ending 10 - Final Ending","Nobody was supposed to reach this.");
+}
 
 function clicked(){
 
 clicks++;
 
-document.getElementById("counter").innerText =
-"Clicks: " + clicks;
+updateCounter();
+darken();
+narratorStory();
+checkEndings();
 
-let darkness = Math.min(clicks * 5, 255);
-
-document.body.style.background =
-`rgb(${255-darkness},${255-darkness},${255-darkness})`;
-
-if(clicks === 5){
-message.innerText = "Seriously?";
-}
-
-if(clicks === 10){
-message.innerText = "Please stop.";
-}
-
-if(clicks === 20){
-message.innerText = "Why are you still clicking?";
-}
-
-if(clicks === 30){
-message.innerText = "This is getting concerning.";
-}
-
-if(clicks === 50){
-message.innerText = "The button regrets meeting you.";
-}
-
-if(clicks === 75){
-message.innerText = "Darkness approaches...";
-document.body.style.color = "white";
-}
-
-if(clicks === 100){
-message.innerText = "You win. Happy now?";
+// move button after 300 clicks
+if(clicks>=300){
+const button = document.getElementById("button");
+button.style.position = "absolute";
+button.style.left = Math.random()*80 + "%";
+button.style.top = Math.random()*80 + "%";
+button.innerText = weirdTexts[Math.floor(Math.random()*weirdTexts.length)];
 }
 
 }
