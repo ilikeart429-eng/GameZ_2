@@ -222,6 +222,42 @@ unlockEnding(
 "The narrator left."
 );
 }
+    if(clicks===1500){
+
+message.style.display="block";
+
+message.innerText =
+"...";
+
+}
+
+if(clicks===1600){
+
+message.innerText =
+"You're still here?";
+
+}
+
+if(clicks===1700){
+
+message.innerText =
+"I thought you'd leave.";
+
+}
+
+if(clicks===1800){
+
+message.innerText =
+"I left.";
+
+}
+
+if(clicks===1900){
+
+message.innerText =
+"Why didn't you?";
+
+}
 
 if(clicks===500){
 unlockEnding(
@@ -359,7 +395,29 @@ button.style.top=
 Math.random()*80+"%";
 
 }
+if(clicks>300){
 
+const weird = [
+
+"STOP",
+"WHY",
+"...",
+"PLEASE",
+"GO AWAY",
+"ENOUGH",
+"DON'T",
+"LEAVE",
+"WHY ARE YOU HERE"
+
+];
+
+document.getElementById("button")
+.innerText =
+weird[Math.floor(
+Math.random()*weird.length
+)];
+
+}
 }
   </script>
 
