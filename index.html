@@ -5,59 +5,59 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Don't Click The Button</title>
+<title>GameZ_2</title>
 
 <style>
 
 body{
 margin:0;
 font-family:Arial,sans-serif;
+background:#0f0f0f;
+color:white;
 height:100vh;
-overflow:hidden;
 display:flex;
 justify-content:center;
 align-items:center;
-flex-direction:column;
-transition:1s;
-background:white;
 }
 
-#message{
-font-size:32px;
+.container{
 text-align:center;
-max-width:700px;
-padding:20px;
+width:90%;
+max-width:900px;
 }
 
-#button{
-padding:20px 40px;
-font-size:30px;
+h1{
+font-size:70px;
+margin-bottom:10px;
+}
+
+p{
+color:#aaa;
+margin-bottom:40px;
+}
+
+.games{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:20px;
+}
+
+.card{
+background:#1a1a1a;
+padding:30px;
+border-radius:20px;
 cursor:pointer;
-border:none;
-border-radius:15px;
-margin-top:20px;
+transition:0.3s;
+border:2px solid #2a2a2a;
 }
 
-#counter{
-margin-top:20px;
-font-size:24px;
+.card:hover{
+transform:translateY(-5px);
+border-color:white;
 }
 
-#endingBox{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-color:white;
-display:none;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-font-size:30px;
-text-align:center;
-z-index:999;
+.card h2{
+margin-bottom:10px;
 }
 
 </style>
@@ -66,361 +66,52 @@ z-index:999;
 
 <body>
 
-<div id="message">
-Don't click the button.
+<div class="container">
+
+<h1>GameZ_2</h1>
+
+<p>Neal.fun-style mini games</p>
+
+<div class="games">
+
+<div class="card" onclick="openGame('button')">
+<h2>🎯 Don't Click The Button</h2>
+<p>It gets worse every click.</p>
 </div>
 
-<button id="button" onclick="clicked()">
-DON'T CLICK
-</button>
-
-<div id="counter">
-Clicks: 0
+<div class="card" onclick="openGame('ai')">
+<h2>🤖 Annoying AI</h2>
+<p>It refuses to help you.</p>
 </div>
 
-<div id="endingBox">
-
-<h1 id="endingTitle"></h1>
-
-<p id="endingText"></p>
+<div class="card" onclick="openGame('time')">
+<h2>🌌 Time Explorer</h2>
+<p>Coming soon...</p>
+</div>
 
 </div>
+
+</div>
+
 <script>
 
-let clicks = 0;
+function openGame(game){
 
-let narratorGone = false;
-
-let endingsUnlocked = [];
-
-const message =
-document.getElementById("message");
-
-function unlockEnding(name,text){
-
-document.getElementById("endingTitle")
-.innerText=name;
-
-document.getElementById("endingText")
-.innerText=text;
-
-document.getElementById("endingBox")
-.style.display="flex";
-
+if(game === "button"){
+window.location.href = "button.html";
 }
 
-function updateCounter(){
-
-document.getElementById("counter")
-.innerText=
-"Clicks: "+clicks;
-
+if(game === "ai"){
+alert("Coming soon");
 }
 
-function darken(){
-
-let darkness =
-Math.min(clicks*2,255);
-
-document.body.style.background=
-`rgb(${255-darkness},
-${255-darkness},
-${255-darkness})`;
-
-if(clicks>80){
-
-document.body.style.color="white";
-
-}
-
-}
-function narratorStory(){
-
-if(clicks===1){
-message.innerText=
-"Why did you click it?";
-}
-
-if(clicks===5){
-message.innerText=
-"I literally told you not to.";
-}
-
-if(clicks===10){
-message.innerText=
-"Maybe you misread the instructions.";
-}
-
-if(clicks===20){
-message.innerText=
-"You're enjoying this, aren't you?";
-}
-
-if(clicks===40){
-message.innerText=
-"Nobody ever listens.";
-}
-
-if(clicks===60){
-message.innerText=
-"What's the point of asking?";
-}
-
-if(clicks===80){
-message.innerText=
-"I knew this would happen.";
-}
-
-if(clicks===100){
-message.innerText=
-"I've run out of things to say.";
-}
-
-if(clicks===120){
-message.innerText=
-"...";
-}
-
-if(clicks===150){
-message.innerText=
-"I'm tired.";
-}
-
-if(clicks===200){
-message.innerText=
-"Goodbye.";
-}
-
-if(clicks===220){
-
-message.style.display="none";
-
-narratorGone=true;
-
-}
-
-}
-  function checkEndings(){
-
-if(clicks===50){
-unlockEnding(
-"Ending 1 - Persistent",
-"You ignored every warning."
-);
-}
-
-if(clicks===100){
-unlockEnding(
-"Ending 2 - Unstoppable",
-"The narrator is losing hope."
-);
-}
-
-if(clicks===220){
-unlockEnding(
-"Ending 3 - Goodbye",
-"The narrator left."
-);
-}
-    if(clicks===1500){
-
-message.style.display="block";
-
-message.innerText =
-"...";
-
-}
-
-if(clicks===1600){
-
-message.innerText =
-"You're still here?";
-
-}
-
-if(clicks===1700){
-
-message.innerText =
-"I thought you'd leave.";
-
-}
-
-if(clicks===1800){
-
-message.innerText =
-"I left.";
-
-}
-
-if(clicks===1900){
-
-message.innerText =
-"Why didn't you?";
-
-}
-
-if(clicks===500){
-unlockEnding(
-"Ending 4 - Alone",
-"You kept clicking anyway."
-);
-}
-
-if(clicks===1000){
-unlockEnding(
-"Ending 5 - Obsession",
-"This is becoming a lifestyle."
-);
-}
-
-if(clicks===2000){
-unlockEnding(
-"Ending 6 - Still Here",
-"You never stopped."
-);
-}
-
-if(clicks===5000){
-unlockEnding(
-"Ending 7 - Watcher",
-"You've seen things few players see."
-);
-}
-
-if(clicks===10000){
-unlockEnding(
-"Ending 8 - Endless",
-"The button has accepted its fate."
-);
-}
-
-if(clicks===25000){
-unlockEnding(
-"Ending 9 - Beyond",
-"Why are you still clicking?"
-);
-}
-
-if(clicks===50000){
-unlockEnding(
-"Ending 10 - The Final Ending",
-"Nobody was supposed to reach this."
-);
+if(game === "time"){
+alert("Coming soon");
 }
 
 }
 
-if(clicks===50){
-
-unlockEnding(
-"Ending 1",
-"You couldn't stop clicking."
-);
-
-}
-
-if(clicks===100){
-
-unlockEnding(
-"Ending 2",
-"The narrator is frustrated."
-);
-
-}
-
-if(clicks===220){
-
-unlockEnding(
-"Ending 3",
-"The narrator disappeared."
-);
-
-}
-
-if(clicks===500){
-
-unlockEnding(
-"Ending 4",
-"You clicked long after goodbye."
-);
-
-}
-
-if(clicks===1000){
-
-unlockEnding(
-"Ending 5",
-"You are obsessed."
-);
-
-}
-
-}
-  function clicked(){
-
-clicks++;
-
-updateCounter();
-
-darken();
-
-narratorStory();
-
-checkEndings();
-
-if(clicks===300){
-
-const button =
-document.getElementById("button");
-
-button.style.position="absolute";
-
-button.style.left=
-Math.random()*80+"%";
-
-button.style.top=
-Math.random()*80+"%";
-
-}
-
-if(clicks>300){
-
-const button =
-document.getElementById("button");
-
-button.style.left=
-Math.random()*80+"%";
-
-button.style.top=
-Math.random()*80+"%";
-
-}
-if(clicks>300){
-
-const weird = [
-
-"STOP",
-"WHY",
-"...",
-"PLEASE",
-"GO AWAY",
-"ENOUGH",
-"DON'T",
-"LEAVE",
-"WHY ARE YOU HERE"
-
-];
-
-document.getElementById("button")
-.innerText =
-weird[Math.floor(
-Math.random()*weird.length
-)];
-
-}
-}
-  </script>
+</script>
 
 </body>
-
 </html>
