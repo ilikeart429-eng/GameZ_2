@@ -1,1 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Don't Click The Button</title>
 
+<style>
+body{
+margin:0;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+font-family:Arial,sans-serif;
+transition:1s;
+background:white;
+}
+
+h1{
+margin-bottom:20px;
+}
+
+button{
+font-size:30px;
+padding:20px 40px;
+border:none;
+border-radius:15px;
+cursor:pointer;
+}
+
+#counter{
+margin-top:20px;
+font-size:24px;
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="message">Don't Click The Button</h1>
+
+<button onclick="clicked()">
+DON'T CLICK
+</button>
+
+<div id="counter">
+Clicks: 0
+</div>
+
+<script>
+
+let clicks = 0;
+
+function clicked(){
+
+clicks++;
+
+document.getElementById("counter").innerText =
+"Clicks: " + clicks;
+
+let darkness = Math.min(clicks * 5, 255);
+
+document.body.style.background =
+`rgb(${255-darkness},${255-darkness},${255-darkness})`;
+
+if(clicks === 5){
+message.innerText = "Seriously?";
+}
+
+if(clicks === 10){
+message.innerText = "Please stop.";
+}
+
+if(clicks === 20){
+message.innerText = "Why are you still clicking?";
+}
+
+if(clicks === 30){
+message.innerText = "This is getting concerning.";
+}
+
+if(clicks === 50){
+message.innerText = "The button regrets meeting you.";
+}
+
+if(clicks === 75){
+message.innerText = "Darkness approaches...";
+document.body.style.color = "white";
+}
+
+if(clicks === 100){
+message.innerText = "You win. Happy now?";
+}
+
+}
+
+</script>
+
+</body>
+</html>
