@@ -42,13 +42,143 @@ cursor:pointer;
 </head>
 
 <body>
+function resetView(){function travelYear(){
 
+const year =
+parseInt(document.getElementById("yearInput").value);
+
+if(isNaN(year)){
+document.getElementById("title").innerText =
+"Enter a valid year";
+return;
+}
+
+let text = "";
+
+if(year < -3000){
+
+text =
+"Prehistoric Earth. Small groups of humans survive using stone tools.";
+
+}
+else if(year < -500){
+
+text =
+"Ancient civilizations rise. Egypt, Mesopotamia and early kingdoms dominate.";
+
+}
+else if(year < 500){
+
+text =
+"The Roman Empire influences much of Europe and the Mediterranean.";
+
+}
+else if(year < 1000){
+
+text =
+"The early Middle Ages. Kingdoms rise and fall.";
+
+}
+else if(year < 1500){
+
+text =
+"Castles, knights and trade routes shape the medieval world.";
+
+}
+else if(year < 1800){
+
+text =
+"The Age of Exploration. Continents become connected by sea travel.";
+
+}
+else if(year < 1900){
+
+text =
+"The Industrial Revolution transforms society with machines and factories.";
+
+}
+else if(year < 1914){
+
+text =
+"The modern era expands through technology and science.";
+
+}
+else if(year < 1919){
+
+text =
+"World War I changes global history.";
+
+}
+else if(year < 1939){
+
+text =
+"The interwar years reshape nations.";
+
+}
+else if(year < 1946){
+
+text =
+"World War II impacts nearly every country.";
+
+}
+else if(year < 1991){
+
+text =
+"The Cold War era. Space exploration begins.";
+
+}
+else if(year < 2020){
+
+text =
+"The Internet age connects billions of people.";
+
+}
+else if(year < 2050){
+
+text =
+"The AI era emerges across the world.";
+
+}
+else{
+
+text =
+"The future is unknown. Humanity continues to evolve.";
+
+}
+
+document.getElementById("title").innerText =
+"Year " + year;
+
+document.getElementById("desc").innerText =
+text;
+
+}
 <div id="cesiumContainer"></div>
 
 <div id="panel">
-<div id="title">🌍 Click anywhere on Earth</div>
-<div id="desc"></div>
-<button onclick="resetView()">Reset View</button>
+<div id="title">🌍 Time Explorer</div>
+
+<input
+id="yearInput"
+placeholder="Enter a year..."
+style="
+width:100%;
+padding:10px;
+margin-top:10px;
+box-sizing:border-box;
+">
+
+<button onclick="travelYear()">
+Travel Through Time
+</button>
+
+<div id="desc" style="margin-top:10px;">
+Type a year to begin.
+</div>
+
+<button onclick="resetView()">
+Reset View
+</button>
 </div>
 
 <script>
@@ -171,3 +301,11 @@ document.getElementById("desc").innerText =
 
 </body>
 </html>
+document.getElementById("yearInput")
+.addEventListener("keydown", e => {
+
+if(e.key === "Enter"){
+travelYear();
+}
+
+});
