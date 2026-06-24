@@ -108,3 +108,221 @@ opacity:0.8;
 </div>
 
 </div>
+<script>
+
+let mood = 0; 
+// -100 angry, 0 neutral, +100 friendly
+
+let memory = [];
+
+const chat = document.getElementById("chat");
+
+function addMsg(text, type){
+
+const div = document.createElement("div");
+div.className = "msg " + type;
+div.innerText = text;
+
+chat.appendChild(div);
+chat.scrollTop = chat.scrollHeight;
+
+}
+
+function updateStats(){
+document.getElementById("memoryCount").innerText = memory.length;
+
+let moodText = "Neutral";
+
+if(mood > 40) moodText = "Friendly";
+else if(mood > 10) moodText = "Calm";
+else if(mood < -40) moodText = "Angry";
+else if(mood < -10) moodText = "Annoyed";
+
+document.getElementById("mood").innerText = moodText;
+}
+
+// simple emotion detection
+function analyze(text){
+
+text = text.toLowerCase();
+
+let data = {
+positive: 0,
+negative: 0,
+question: false
+};
+
+if(text.includes("?")) data.question = true;
+
+const positiveWords = ["please","thanks","thank","good","nice","help"];
+const negativeWords = ["stupid","idiot","hate","useless","bad","shut"];
+
+positiveWords.forEach(w=>{
+if(text.includes(w)) data.positive++;
+});
+
+negativeWords.forEach(w=>{
+if(text.includes(w)) data.negative++;
+});
+
+return data;
+}
+
+// AI thinking core (we build logic next chunk)
+function think(userText){
+
+memory.push(userText);
+
+if(memory.length > 12){
+memory.shift();
+}
+
+const analysis = analyze(userText);
+
+// mood shifting
+mood += analysis.positive * 8;
+mood -= analysis.negative * 10;
+
+mood = Math.max(-100, Math.min(100, mood));
+
+updateStats();
+
+// TEMP RESPONSE (we upgrade this in chunk 3)
+setTimeout(()=>{
+
+const reply = generateResponse(userText);
+addMsg(reply, "ai");
+updateStats();
+}, 600);
+
+}
+
+function send(){
+
+const input = document.getElementById("input");
+const text = input.value.trim();
+
+if(!text) return;
+
+addMsg(text, "user");
+
+input.value = "";
+
+think(text);
+
+}
+
+document.getElementById("input")
+.addEventListener("keypress", e=>{
+if(e.key === "Enter") send();
+});
+
+updateStats();
+
+</script>
+
+</body>
+</html>
+function generateResponse(text){
+
+const t = text.toLowerCase();
+
+// build “context awareness”
+const lastMemory = memory[memory.length - 2] || "";
+const analysis = analyze(text);
+
+// sarcasm level from mood
+let sarcasm = 0;
+
+if(mood < -30) sarcasm = 2;
+else if(mood < 0) sarcasm = 1;
+else sarcasm = 0;
+
+// memory reference chance
+let rememberChance = memory.length > 3 ? 0.3 : 0.1;
+
+let response = "";
+
+// --- QUESTION HANDLING ---
+if(t.includes("?")){
+
+if(mood < -40){
+response = "Why are you asking me that?";
+}
+
+else if(mood < 0){
+response = "I could answer... but I don’t feel like it.";
+}
+
+else if(mood < 40){
+response = "Hmm... interesting question. Let me think.";
+}
+
+else{
+response = "Sure. That’s actually a good question.";
+}
+
+}
+
+// --- NEGATIVE INPUT ---
+else if(analysis.negative > 0){
+
+if(mood < -50){
+response = "You’re really annoying me now.";
+}
+else{
+response = "That’s not very nice.";
+}
+
+mood -= 5;
+
+}
+
+// --- POSITIVE INPUT ---
+else if(analysis.positive > 0){
+
+if(mood > 50){
+response = "I appreciate that. It’s rare.";
+}
+else{
+response = "…okay.";
+}
+
+mood += 3;
+
+}
+
+// --- NORMAL CHAT ---
+else{
+
+const generic = [
+"I see.",
+"Interesting.",
+"Go on.",
+"Explain more.",
+"Hmm."
+];
+
+response = generic[Math.floor(Math.random()*generic.length)];
+
+}
+
+// --- MEMORY INJECTION (makes it feel alive) ---
+if(Math.random() < rememberChance && memory.length > 1){
+
+response += " Earlier you said: \"" + lastMemory + "\"";
+
+}
+
+// --- SARCASTIC FILTER ---
+if(sarcasm === 2 && Math.random() < 0.5){
+response = "Yeah sure. That totally makes sense.";
+}
+
+else if(sarcasm === 1 && Math.random() < 0.3){
+response = response + " ...I guess.";
+}
+
+return response;
+}
+  
