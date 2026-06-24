@@ -28,15 +28,13 @@ font-size:60px;
 margin-bottom:10px;
 }
 
-p{
-color:#aaa;
-margin-bottom:30px;
-}
+p{color:#aaa;}
 
 .games{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:20px;
+margin-top:30px;
 }
 
 .card{
@@ -47,9 +45,7 @@ cursor:pointer;
 transition:0.2s;
 }
 
-.card:hover{
-transform:scale(1.05);
-}
+.card:hover{transform:scale(1.05);}
 
 #adminBtn{
 position:fixed;
@@ -63,16 +59,9 @@ font-size:12px;
 opacity:0.6;
 }
 
-#adminBtn:hover{
-opacity:1;
-}
-
 #adminPanel{
 position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
+inset:0;
 background:rgba(0,0,0,0.9);
 display:none;
 justify-content:center;
@@ -107,17 +96,13 @@ cursor:pointer;
 
 <body>
 
-<!-- ADMIN BUTTON -->
 <div id="adminBtn" onclick="openAdmin()">Admin</div>
 
-<!-- ADMIN PANEL -->
 <div id="adminPanel">
   <div class="box">
     <h2>Developer Mode</h2>
 
     <input id="codeInput" placeholder="Enter code">
-
-    <br>
 
     <button onclick="checkCode()">Unlock</button>
 
@@ -125,18 +110,17 @@ cursor:pointer;
 
     <hr>
 
-    <button onclick="setMood(100)">😊 AI Happy</button>
+    <button onclick="setMood(100)">😊 Happy</button>
     <button onclick="setMood(0)">😐 Neutral</button>
     <button onclick="setMood(-100)">😡 Angry</button>
 
     <br><br>
 
-    <button onclick="unlockAll()">Unlock All Games</button>
+    <button onclick="unlockAll()">Unlock All</button>
     <button onclick="closeAdmin()">Close</button>
   </div>
 </div>
 
-<!-- MAIN PAGE -->
 <div class="container">
 
 <h1>GameZ_2</h1>
@@ -144,17 +128,9 @@ cursor:pointer;
 
 <div class="games">
 
-<div class="card" onclick="openGame('button')">
-🎯 Don't Click The Button
-</div>
-
-<div class="card" onclick="openGame('ai')">
-🤖 Annoying AI
-</div>
-
-<div class="card" onclick="openGame('time')">
-🌌 Time Explorer
-</div>
+<div class="card" onclick="openGame('button')">🎯 Button Game</div>
+<div class="card" onclick="openGame('ai')">🤖 AI Game</div>
+<div class="card" onclick="openGame('time')">🌌 Time Explorer</div>
 
 </div>
 
@@ -163,70 +139,47 @@ cursor:pointer;
 <script>
 
 let devMode = false;
-let mood = 0;
 
-function openGame(game){
-
-if(game === "button"){
-window.location.href = "button.html";
+function openGame(g){
+if(g==="button") window.location.href="button.html";
+if(g==="ai") window.location.href="ai.html";
+if(g==="time") window.location.href="time.html";
 }
 
-if(game === "ai"){
-window.location.href = "ai.html";
-}
-
-if(game === "time"){
-window.location.href = "time.html";
-}
-
-}
-
-// ADMIN SYSTEM
+// ADMIN
 function openAdmin(){
-document.getElementById("adminPanel").style.display = "flex";
+document.getElementById("adminPanel").style.display="flex";
 }
 
 function closeAdmin(){
-document.getElementById("adminPanel").style.display = "none";
+document.getElementById("adminPanel").style.display="none";
 }
 
 function checkCode(){
+let code = document.getElementById("codeInput").value;
 
-const code = document.getElementById("codeInput").value;
-
-if(code === "quandel"){
+if(code==="quandel"){
 devMode = true;
-document.getElementById("adminMsg").innerText = "DEV MODE ACTIVATED";
+document.getElementById("adminMsg").innerText="DEV MODE ON";
+}else{
+document.getElementById("adminMsg").innerText="Wrong code";
 }
-else{
-document.getElementById("adminMsg").innerText = "Wrong code";
-}
-
 }
 
 function setMood(value){
 
 if(!devMode){
-alert("Not unlocked");
+alert("Locked");
 return;
 }
 
-mood = value;
-
-alert("AI mood set to: " + mood);
-
+localStorage.setItem("aiMood", value);
+alert("Mood set to " + value);
 }
 
 function unlockAll(){
-
-if(!devMode){
-alert("Not unlocked");
-return;
-}
-
-alert("All games unlocked!");
-console.log("DEV MODE: everything unlocked");
-
+if(!devMode){alert("Locked");return;}
+alert("Everything unlocked (demo)");
 }
 
 </script>
