@@ -1,159 +1,324 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Time Explorer</title>
+
+<title>Time Explorer 2.0</title>
 
 <style>
+
 body{
 margin:0;
-font-family:Arial;
+font-family:Arial,sans-serif;
 background:black;
 color:white;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-height:100vh;
 overflow:hidden;
 }
 
+#universe{
+position:fixed;
+inset:0;
+background:
+radial-gradient(circle at center,#001133,#000);
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+transition:1s;
+}
+
 h1{
-margin-bottom:10px;
-}
-
-#year{
-font-size:40px;
-margin:10px;
-}
-
-input{
-width:300px;
-margin-bottom:10px;
-}
-
-#event{
-margin-top:10px;
-font-size:16px;
-max-width:600px;
-text-align:center;
-color:#aaa;
+margin:15px;
 }
 
 #space{
 position:relative;
-width:420px;
-height:420px;
-margin-top:25px;
-border-radius:50%;
-background:radial-gradient(circle, #001133, #000);
-overflow:hidden;
-box-shadow:0 0 40px #0a2a66;
+width:700px;
+height:700px;
 }
 
 .object{
 position:absolute;
+font-size:70px;
 cursor:pointer;
-font-size:24px;
-transition:0.2s;
+transition:0.8s;
 user-select:none;
 }
 
 .object:hover{
-transform:scale(1.3);
+transform:scale(1.2);
 }
 
-#infoBox{
-margin-top:15px;
-color:#bbb;
-max-width:600px;
-text-align:center;
-min-height:40px;
+.zooming{
+transform:scale(8);
+opacity:0;
 }
+
+#explorer{
+position:fixed;
+inset:0;
+background:#050505;
+display:none;
+overflow-y:auto;
+padding:20px;
+}
+
+#backBtn{
+padding:10px 20px;
+border:none;
+border-radius:8px;
+cursor:pointer;
+margin-bottom:20px;
+}
+
+#photo{
+width:100%;
+max-width:800px;
+border-radius:15px;
+display:none;
+margin:auto;
+}
+
+#title{
+text-align:center;
+font-size:42px;
+margin-top:20px;
+}
+
+#desc{
+max-width:900px;
+margin:20px auto;
+line-height:1.6;
+color:#ddd;
+}
+
+#children{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:15px;
+margin-top:30px;
+}
+
+.child{
+background:#151515;
+padding:15px;
+border-radius:10px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.child:hover{
+transform:scale(1.05);
+}
+
 </style>
+
 </head>
 
 <body>
 
-<h1>🕒 Time Explorer</h1>
+<div id="universe">
 
-<div id="year">2000</div>
-
-<input type="range" min="0" max="2026" value="2000" oninput="changeYear(this.value)">
-
-<div id="event">Move the slider to explore time...</div>
+<h1>🌌 Time Explorer</h1>
 
 <div id="space">
 
-  <div class="object" style="top:50%;left:50%;" onclick="clickObject('earth')">
-    🌍
-  </div>
+<div
+class="object"
+style="left:310px;top:300px;"
+onclick="explore('Earth',this)">
+🌍
+</div>
 
-  <div class="object" style="top:20%;left:70%;" onclick="clickObject('moon')">
-    🌕
-  </div>
+<div
+class="object"
+style="left:120px;top:150px;"
+onclick="explore('Moon',this)">
+🌕
+</div>
 
-  <div class="object" style="top:70%;left:30%;" onclick="clickObject('mars')">
-    🔴
-  </div>
+<div
+class="object"
+style="left:500px;top:180px;"
+onclick="explore('Mars',this)">
+🔴
+</div>
+
+<div
+class="object"
+style="left:250px;top:100px;"
+onclick="explore('Jupiter',this)">
+🟠
+</div>
 
 </div>
 
-<div id="infoBox">Click a planet to explore</div>
+</div>
+
+<div id="explorer">
+
+<button id="backBtn" onclick="goHome()">
+⬅ Back
+</button>
+
+<h1 id="title"></h1>
+
+<img id="photo">
+
+<div id="desc"></div>
+
+<div id="children"></div>
+
+</div>
 
 <script>
 
-let year = 2000;
+async function explore(place,el){
 
-function changeYear(y){
-year = y;
-document.getElementById("year").innerText = year;
-
-let eventText = "";
-
-if(year < 1000){
-eventText = "Ancient civilizations rise. The world is unknown.";
-}
-else if(year < 1500){
-eventText = "Medieval era. Castles, kingdoms, wars.";
-}
-else if(year < 1800){
-eventText = "Age of exploration and science begins.";
-}
-else if(year < 1950){
-eventText = "Industrial revolution and global wars.";
-}
-else if(year < 2000){
-eventText = "Modern world develops rapidly.";
-}
-else if(year < 2015){
-eventText = "Digital age expands. Internet grows.";
-}
-else{
-eventText = "AI era begins. Everything is connected.";
+if(el){
+el.classList.add("zooming");
 }
 
-document.getElementById("event").innerText = eventText;
+setTimeout(()=>{
+document.getElementById("universe").style.display="none";
+document.getElementById("explorer").style.display="block";
+},700);
+
+loadWiki(place);
+
 }
 
-function clickObject(name){
+async function loadWiki(place){
 
-let info = "";
+document.getElementById("title").innerText =
+"Loading...";
 
-if(name === "earth"){
-info = "🌍 Earth: Home of humanity. Full of history, life, and civilizations.";
+document.getElementById("desc").innerText = "";
+
+document.getElementById("children").innerHTML = "";
+
+try{
+
+const res = await fetch(
+"https://en.wikipedia.org/api/rest_v1/page/summary/"
++ encodeURIComponent(place)
+);
+
+const data = await res.json();
+
+document.getElementById("title").innerText =
+data.title || place;
+
+document.getElementById("desc").innerText =
+data.extract || "No description found.";
+
+const photo =
+document.getElementById("photo");
+
+if(data.thumbnail){
+
+photo.src =
+data.thumbnail.source;
+
+photo.style.display = "block";
+
+}else{
+
+photo.style.display = "none";
+
 }
 
-if(name === "moon"){
-info = "🌕 Moon: Earth's natural satellite. Controls tides and inspires exploration.";
+generateChildren(place);
+
+}catch(err){
+
+document.getElementById("title").innerText =
+place;
+
+document.getElementById("desc").innerText =
+"Failed to load Wikipedia.";
+
 }
 
-if(name === "mars"){
-info = "🔴 Mars: The red planet. Future human colonization target.";
 }
 
-document.getElementById("infoBox").innerText = info;
+function generateChildren(place){
+
+const box =
+document.getElementById("children");
+
+let locations = [];
+
+if(place==="Earth"){
+
+locations = [
+"Europe",
+"Asia",
+"Africa",
+"North America",
+"South America",
+"Oceania"
+];
+
+}
+
+else if(place==="Europe"){
+
+locations = [
+"France",
+"Germany",
+"Italy",
+"Spain",
+"United Kingdom"
+];
+
+}
+
+else if(place==="France"){
+
+locations = [
+"Paris",
+"Nice",
+"Marseille",
+"Lyon",
+"Toulouse"
+];
+
+}
+
+else if(place==="Nice"){
+
+locations = [
+"Promenade des Anglais",
+"Castle Hill",
+"Old Town Nice"
+];
+
+}
+
+locations.forEach(name=>{
+
+const div =
+document.createElement("div");
+
+div.className="child";
+
+div.innerText=name;
+
+div.onclick=()=>loadWiki(name);
+
+box.appendChild(div);
+
+});
+
+}
+
+function goHome(){
+
+location.reload();
 
 }
 
