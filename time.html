@@ -1,325 +1,136 @@
 <!DOCTYPE html>
-
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time Explorer - Real Earth</title>
 
-<title>Time Explorer 2.0</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
 <style>
-
 body{
 margin:0;
-font-family:Arial,sans-serif;
-background:black;
+font-family:Arial;
+background:#000;
 color:white;
-overflow:hidden;
 }
 
-#universe{
-position:fixed;
-inset:0;
-background:
-radial-gradient(circle at center,#001133,#000);
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-transition:1s;
-}
-
-h1{
-margin:15px;
-}
-
-#space{
-position:relative;
-width:700px;
-height:700px;
-}
-
-.object{
-position:absolute;
-font-size:70px;
-cursor:pointer;
-transition:0.8s;
-user-select:none;
-}
-
-.object:hover{
-transform:scale(1.2);
-}
-
-.zooming{
-transform:scale(8);
-opacity:0;
-}
-
-#explorer{
-position:fixed;
-inset:0;
-background:#050505;
-display:none;
-overflow-y:auto;
-padding:20px;
-}
-
-#backBtn{
-padding:10px 20px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-margin-bottom:20px;
-}
-
-#photo{
+#map{
+height:100vh;
 width:100%;
-max-width:800px;
-border-radius:15px;
+}
+
+#panel{
+position:fixed;
+right:0;
+top:0;
+width:350px;
+height:100%;
+background:#111;
+overflow:auto;
+padding:15px;
 display:none;
-margin:auto;
+z-index:999;
 }
 
 #title{
-text-align:center;
-font-size:42px;
-margin-top:20px;
+font-size:22px;
+margin-bottom:10px;
 }
 
-#desc{
-max-width:900px;
-margin:20px auto;
-line-height:1.6;
-color:#ddd;
-}
-
-#children{
-display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:15px;
-margin-top:30px;
-}
-
-.child{
-background:#151515;
-padding:15px;
+#img{
+width:100%;
 border-radius:10px;
+margin-top:10px;
+}
+
+button{
+padding:10px;
+margin-bottom:10px;
 cursor:pointer;
-transition:0.2s;
+border:none;
+border-radius:8px;
 }
-
-.child:hover{
-transform:scale(1.05);
-}
-
 </style>
-
 </head>
 
 <body>
 
-<div id="universe">
+<div id="map"></div>
 
-<h1>🌌 Time Explorer</h1>
-
-<div id="space">
-
-<div
-class="object"
-style="left:310px;top:300px;"
-onclick="explore('Earth',this)">
-🌍
+<div id="panel">
+<button onclick="closePanel()">⬅ Close</button>
+<div id="title"></div>
+<div id="text"></div>
+<img id="img">
 </div>
 
-<div
-class="object"
-style="left:120px;top:150px;"
-onclick="explore('Moon',this)">
-🌕
-</div>
-
-<div
-class="object"
-style="left:500px;top:180px;"
-onclick="explore('Mars',this)">
-🔴
-</div>
-
-<div
-class="object"
-style="left:250px;top:100px;"
-onclick="explore('Jupiter',this)">
-🟠
-</div>
-
-</div>
-
-</div>
-
-<div id="explorer">
-
-<button id="backBtn" onclick="goHome()">
-⬅ Back
-</button>
-
-<h1 id="title"></h1>
-
-<img id="photo">
-
-<div id="desc"></div>
-
-<div id="children"></div>
-
-</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
-async function explore(place,el){
+// 🌍 INIT MAP
+const map = L.map('map').setView([20, 0], 2);
 
-if(el){
-el.classList.add("zooming");
-}
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+}).addTo(map);
 
-setTimeout(()=>{
-document.getElementById("universe").style.display="none";
-document.getElementById("explorer").style.display="block";
-},700);
+// 🌍 CLICK ANYWHERE
+map.on('click', async function(e){
 
-loadWiki(place);
+const lat = e.latlng.lat;
+const lon = e.latlng.lng;
 
-}
-
-async function loadWiki(place){
-
-document.getElementById("title").innerText =
-"Loading...";
-
-document.getElementById("desc").innerText = "";
-
-document.getElementById("children").innerHTML = "";
-
-try{
-
-const res = await fetch(
-"https://en.wikipedia.org/api/rest_v1/page/summary/"
-+ encodeURIComponent(place)
-);
-
-const data = await res.json();
-
-document.getElementById("title").innerText =
-data.title || place;
-
-document.getElementById("desc").innerText =
-data.extract || "No description found.";
-
-const photo =
-document.getElementById("photo");
-
-if(data.thumbnail){
-
-photo.src =
-data.thumbnail.source;
-
-photo.style.display = "block";
-
-}else{
-
-photo.style.display = "none";
-
-}
-
-generateChildren(place);
-
-}catch(err){
-
-document.getElementById("title").innerText =
-place;
-
-document.getElementById("desc").innerText =
-"Failed to load Wikipedia.";
-
-}
-
-}
-
-function generateChildren(place){
-
-const box =
-document.getElementById("children");
-
-let locations = [];
-
-if(place==="Earth"){
-
-locations = [
-"Europe",
-"Asia",
-"Africa",
-"North America",
-"South America",
-"Oceania"
-];
-
-}
-
-else if(place==="Europe"){
-
-locations = [
-"France",
-"Germany",
-"Italy",
-"Spain",
-"United Kingdom"
-];
-
-}
-
-else if(place==="France"){
-
-locations = [
-"Paris",
-"Nice",
-"Marseille",
-"Lyon",
-"Toulouse"
-];
-
-}
-
-else if(place==="Nice"){
-
-locations = [
-"Promenade des Anglais",
-"Castle Hill",
-"Old Town Nice"
-];
-
-}
-
-locations.forEach(name=>{
-
-const div =
-document.createElement("div");
-
-div.className="child";
-
-div.innerText=name;
-
-div.onclick=()=>loadWiki(name);
-
-box.appendChild(div);
+loadPlace(lat, lon);
 
 });
 
+// 🌍 REVERSE GEOCODING (GET COUNTRY/CITY)
+async function loadPlace(lat, lon){
+
+document.getElementById("panel").style.display="block";
+document.getElementById("title").innerText="Loading...";
+document.getElementById("text").innerText="";
+document.getElementById("img").src="";
+
+const geo = await fetch(
+`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+);
+
+const data = await geo.json();
+
+const name =
+data.address.country ||
+data.address.state ||
+data.address.city ||
+"Unknown";
+
+document.getElementById("title").innerText = name;
+
+// 🌍 Wikipedia data
+const wiki = await fetch(
+"https://en.wikipedia.org/api/rest_v1/page/summary/" +
+encodeURIComponent(name)
+);
+
+const w = await wiki.json();
+
+document.getElementById("text").innerText =
+w.extract || "No info found.";
+
+if(w.thumbnail){
+document.getElementById("img").src = w.thumbnail.source;
 }
 
-function goHome(){
+// smooth zoom
+map.setView([lat, lon], 5, {animate:true});
 
-location.reload();
+}
 
+// ❌ CLOSE PANEL
+function closePanel(){
+document.getElementById("panel").style.display="none";
 }
 
 </script>
