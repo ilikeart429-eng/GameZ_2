@@ -235,6 +235,61 @@ text;
 
 }
 
+function travelYear(){
+
+const year =
+parseInt(document.getElementById("yearInput").value);
+
+if(isNaN(year)){
+document.getElementById("title").innerText =
+"Enter a valid year";
+return;
+}
+
+let text = "";
+
+if(year < -3000){
+text = "Prehistoric Earth. Early humans survive using stone tools.";
+}
+else if(year < -500){
+text = "Ancient civilizations rise.";
+}
+else if(year < 500){
+text = "The Roman Empire influences much of Europe.";
+}
+else if(year < 1000){
+text = "The early Middle Ages.";
+}
+else if(year < 1500){
+text = "The medieval world.";
+}
+else if(year < 1800){
+text = "The Age of Exploration.";
+}
+else if(year < 1900){
+text = "The Industrial Revolution.";
+}
+else if(year < 1919){
+text = "World War I.";
+}
+else if(year < 1946){
+text = "World War II.";
+}
+else if(year < 2020){
+text = "The Internet age.";
+}
+else{
+text = "The future.";
+}
+
+document.getElementById("title").innerText =
+"Year " + year;
+
+document.getElementById("desc").innerText =
+text;
+
+}
+
 function resetView(){
 
 viewer.camera.flyTo({
@@ -251,20 +306,15 @@ document.getElementById("title").innerText =
 "🌍 Time Explorer";
 
 document.getElementById("desc").innerText =
-"Type a year such as 1066, 1492, 1776, 1944, 2025, or 3000.";
+"Type a year to begin.";
 
 }
 
-document
-.getElementById("yearInput")
-.addEventListener("keydown",e=>{
+document.getElementById("yearInput")
+.addEventListener("keydown", e => {
 
-if(e.key==="Enter"){
+if(e.key === "Enter"){
 travelYear();
 }
 
 });
-</script>
-
-</body>
-</html>
