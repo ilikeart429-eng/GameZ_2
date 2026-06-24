@@ -1,311 +1,270 @@
 <!DOCTYPE html>
+
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Time Explorer 3D</title>
+<title>Time Explorer</title>
 
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Cesium.js"></script>
+
 <link href="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 
 <style>
-html, body, #cesiumContainer {
-width: 100%;
-height: 100%;
-margin: 0;
-padding: 0;
-overflow: hidden;
+html, body, #cesiumContainer{
+width:100%;
+height:100%;
+margin:0;
+padding:0;
+overflow:hidden;
+font-family:Arial;
 }
 
-#panel {
-position: absolute;
-top: 10px;
-left: 10px;
-width: 320px;
-background: rgba(0,0,0,0.8);
-color: white;
-padding: 12px;
-border-radius: 10px;
-font-family: Arial;
-z-index: 10;
+#panel{
+position:absolute;
+top:10px;
+left:10px;
+width:340px;
+background:rgba(0,0,0,0.85);
+color:white;
+padding:15px;
+border-radius:12px;
+z-index:999;
+}
+
+#title{
+font-size:22px;
+margin-bottom:10px;
+}
+
+#yearInput{
+width:100%;
+padding:10px;
+box-sizing:border-box;
+border:none;
+border-radius:8px;
+margin-bottom:10px;
 }
 
 button{
-margin-top:10px;
-padding:10px;
 width:100%;
+padding:10px;
 border:none;
 border-radius:8px;
 cursor:pointer;
+margin-top:5px;
+}
+
+#desc{
+margin-top:10px;
+line-height:1.4;
+min-height:120px;
 }
 </style>
+
 </head>
 
 <body>
-function resetView(){function travelYear(){
 
-const year =
-parseInt(document.getElementById("yearInput").value);
-
-if(isNaN(year)){
-document.getElementById("title").innerText =
-"Enter a valid year";
-return;
-}
-
-let text = "";
-
-if(year < -3000){
-
-text =
-"Prehistoric Earth. Small groups of humans survive using stone tools.";
-
-}
-else if(year < -500){
-
-text =
-"Ancient civilizations rise. Egypt, Mesopotamia and early kingdoms dominate.";
-
-}
-else if(year < 500){
-
-text =
-"The Roman Empire influences much of Europe and the Mediterranean.";
-
-}
-else if(year < 1000){
-
-text =
-"The early Middle Ages. Kingdoms rise and fall.";
-
-}
-else if(year < 1500){
-
-text =
-"Castles, knights and trade routes shape the medieval world.";
-
-}
-else if(year < 1800){
-
-text =
-"The Age of Exploration. Continents become connected by sea travel.";
-
-}
-else if(year < 1900){
-
-text =
-"The Industrial Revolution transforms society with machines and factories.";
-
-}
-else if(year < 1914){
-
-text =
-"The modern era expands through technology and science.";
-
-}
-else if(year < 1919){
-
-text =
-"World War I changes global history.";
-
-}
-else if(year < 1939){
-
-text =
-"The interwar years reshape nations.";
-
-}
-else if(year < 1946){
-
-text =
-"World War II impacts nearly every country.";
-
-}
-else if(year < 1991){
-
-text =
-"The Cold War era. Space exploration begins.";
-
-}
-else if(year < 2020){
-
-text =
-"The Internet age connects billions of people.";
-
-}
-else if(year < 2050){
-
-text =
-"The AI era emerges across the world.";
-
-}
-else{
-
-text =
-"The future is unknown. Humanity continues to evolve.";
-
-}
-
-document.getElementById("title").innerText =
-"Year " + year;
-
-document.getElementById("desc").innerText =
-text;
-
-}
 <div id="cesiumContainer"></div>
 
 <div id="panel">
+
 <div id="title">🌍 Time Explorer</div>
 
 <input
 id="yearInput"
+type="number"
 placeholder="Enter a year..."
-style="
-width:100%;
-padding:10px;
-margin-top:10px;
-box-sizing:border-box;
-">
+
+>
 
 <button onclick="travelYear()">
 Travel Through Time
 </button>
 
-<div id="desc" style="margin-top:10px;">
-Type a year to begin.
+<div id="desc">
+Type a year such as 1066, 1492, 1776, 1944, 2025, or 3000.
 </div>
 
 <button onclick="resetView()">
 Reset View
 </button>
+
 </div>
 
 <script>
 
-//////////////////////////////////////////////////////
-// 🌍 FIX 1: REQUIRED CESIUM TOKEN (IMPORTANT)
-//////////////////////////////////////////////////////
-Cesium.Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIzN2RjY2UyMy00MjMwLTRlOWItOWYwOC01OTIxZmQxN2FhZmQiLCJpZCI6NDQ4NjM2LCJzdWIiOiJmZ2hqIiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6IlRpbWUgRXhwbG9yZXIiLCJpYXQiOjE3ODIzMTA3MDN9.znbw-rVfKlcngBaY-oYANMRcntO5FaMbmZrMZ-jRynI";
+Cesium.Ion.defaultAccessToken =
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTFiZTUwNi01YjQzLTRiMWEtOGE4Mi0wYWZiMWZlODIzYTEiLCJpZCI6NDQ4NjM2LCJzdWIiOiJmZ2hqIiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6IlRpbWUgRXhwbG9yZXIiLCJpYXQiOjE3ODIzMjcxMzB9.dEQ0gHTtI1KD2QKm3x2qDWap2n-pmzoNbC-EJegkDc0";
 
-//////////////////////////////////////////////////////
-// 🌍 FIX 2: SAFE VIEWER CONFIG (NO WHITE SCREEN)
-//////////////////////////////////////////////////////
-const viewer = new Cesium.Viewer("cesiumContainer", {
-animation: false,
-timeline: false,
-baseLayerPicker: false,
-geocoder: false,
-terrainProvider: undefined
+const viewer = new Cesium.Viewer("cesiumContainer",{
+animation:false,
+timeline:false,
+baseLayerPicker:false,
+geocoder:false,
+terrainProvider:undefined
 });
 
-//////////////////////////////////////////////////////
-// 🌍 DEFAULT VIEW (MUST SET OR YOU SEE WHITE SCREEN)
-//////////////////////////////////////////////////////
 viewer.camera.setView({
-destination: Cesium.Cartesian3.fromDegrees(0, 20, 20000000)
+destination:
+Cesium.Cartesian3.fromDegrees(
+0,
+20,
+20000000
+)
 });
 
-//////////////////////////////////////////////////////
-// 🌍 CLICK HANDLER
-//////////////////////////////////////////////////////
-const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+function travelYear(){
 
-handler.setInputAction(async function(click){
-
-const cartesian = viewer.camera.pickEllipsoid(click.position);
-if(!cartesian) return;
-
-const cartographic =
-Cesium.Cartographic.fromCartesian(cartesian);
-
-const lat = Cesium.Math.toDegrees(cartographic.latitude);
-const lon = Cesium.Math.toDegrees(cartographic.longitude);
-
-// smooth zoom in
-viewer.camera.flyTo({
-destination: Cesium.Cartesian3.fromDegrees(lon, lat, 2000000),
-duration: 1.5
-});
-
-loadPlace(lat, lon);
-
-}, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
-//////////////////////////////////////////////////////
-// 📍 WIKIPEDIA + LOCATION INFO
-//////////////////////////////////////////////////////
-async function loadPlace(lat, lon){
-
-document.getElementById("title").innerText = "Loading...";
-document.getElementById("desc").innerText = "";
-
-try{
-
-// 🌍 Reverse geocode (country/city)
-const geo = await fetch(
-`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+const year =
+parseInt(
+document.getElementById("yearInput").value
 );
 
-const data = await geo.json();
+if(isNaN(year)){
+document.getElementById("desc").innerText =
+"Please enter a valid year.";
+return;
+}
 
-const place =
-data.address.city ||
-data.address.town ||
-data.address.village ||
-data.address.state ||
-data.address.country ||
-"Unknown location";
+let text="";
 
-document.getElementById("title").innerText = place;
+if(year < -3000){
 
-// 📖 Wikipedia
-const wiki = await fetch(
-"https://en.wikipedia.org/api/rest_v1/page/summary/" +
-encodeURIComponent(place)
-);
+text =
+"Prehistoric Earth. Small groups of humans survive using stone tools and fire.";
 
-const w = await wiki.json();
+}
+else if(year < -500){
+
+text =
+"Ancient civilizations rise. Egypt, Mesopotamia, and powerful kingdoms dominate the world.";
+
+}
+else if(year < 500){
+
+text =
+"The Roman Empire influences much of Europe and the Mediterranean world.";
+
+}
+else if(year < 1000){
+
+text =
+"The early Middle Ages. Kingdoms rise and fall across continents.";
+
+}
+else if(year < 1500){
+
+text =
+"Castles, knights, trade routes, and powerful rulers shape the medieval world.";
+
+}
+else if(year < 1800){
+
+text =
+"The Age of Exploration. Oceans connect continents and empires expand.";
+
+}
+else if(year < 1900){
+
+text =
+"The Industrial Revolution transforms transportation, factories, and daily life.";
+
+}
+else if(year < 1914){
+
+text =
+"The modern world grows rapidly through science, engineering, and global trade.";
+
+}
+else if(year < 1919){
+
+text =
+"World War I changes the course of history and reshapes nations.";
+
+}
+else if(year < 1939){
+
+text =
+"The interwar years bring political change, economic struggles, and new technologies.";
+
+}
+else if(year < 1946){
+
+text =
+"World War II affects nearly every part of the globe.";
+
+}
+else if(year < 1991){
+
+text =
+"The Cold War era. Space exploration, computers, and global rivalry define the age.";
+
+}
+else if(year < 2020){
+
+text =
+"The Internet age connects billions of people around the world.";
+
+}
+else if(year < 2050){
+
+text =
+"The AI era begins. Technology becomes increasingly integrated into everyday life.";
+
+}
+else if(year < 3000){
+
+text =
+"The future unfolds with advanced technology, space travel, and unknown discoveries.";
+
+}
+else{
+
+text =
+"The far future. Humanity's path is impossible to predict.";
+
+}
+
+document.getElementById("title").innerText =
+"🕒 Year " + year;
 
 document.getElementById("desc").innerText =
-w.extract || "No description found.";
-
-}catch(err){
-
-document.getElementById("title").innerText = "Error loading data";
-console.error(err);
+text;
 
 }
 
-}
-
-//////////////////////////////////////////////////////
-// 🔄 RESET VIEW
-//////////////////////////////////////////////////////
 function resetView(){
 
 viewer.camera.flyTo({
-destination: Cesium.Cartesian3.fromDegrees(0, 20, 20000000),
-duration: 1.5
+destination:
+Cesium.Cartesian3.fromDegrees(
+0,
+20,
+20000000
+),
+duration:1.5
 });
 
 document.getElementById("title").innerText =
-"🌍 Click anywhere on Earth";
+"🌍 Time Explorer";
 
 document.getElementById("desc").innerText =
-"";
+"Type a year such as 1066, 1492, 1776, 1944, 2025, or 3000.";
 
 }
 
-</script>
+document
+.getElementById("yearInput")
+.addEventListener("keydown",e=>{
 
-</body>
-</html>
-document.getElementById("yearInput")
-.addEventListener("keydown", e => {
-
-if(e.key === "Enter"){
+if(e.key==="Enter"){
 travelYear();
 }
 
 });
+</script>
+
+</body>
+</html>
