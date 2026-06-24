@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Neural AI</title>
+<title>Neural AI Chat</title>
 
 <style>
 
@@ -12,7 +12,7 @@ body{
 margin:0;
 background:#0d0d0d;
 color:white;
-font-family:Arial;
+font-family:Arial,sans-serif;
 height:100vh;
 display:flex;
 justify-content:center;
@@ -43,6 +43,7 @@ margin:10px 0;
 padding:10px;
 border-radius:10px;
 max-width:80%;
+word-wrap:break-word;
 }
 
 .user{
@@ -54,6 +55,7 @@ text-align:right;
 .ai{
 background:#1a1a1a;
 margin-right:auto;
+color:#ddd;
 }
 
 .inputRow{
@@ -69,6 +71,7 @@ border-radius:10px;
 font-size:16px;
 background:#222;
 color:white;
+outline:none;
 }
 
 button{
@@ -76,14 +79,17 @@ padding:15px 20px;
 border:none;
 border-radius:10px;
 cursor:pointer;
+background:white;
+color:black;
+font-weight:bold;
 }
 
 .stats{
 display:flex;
 justify-content:space-between;
 margin-bottom:10px;
-font-size:14px;
-opacity:0.8;
+font-size:13px;
+opacity:0.7;
 }
 
 </style>
@@ -93,11 +99,11 @@ opacity:0.8;
 
 <div class="container">
 
-<h1>🧠 Neural AI</h1>
+<h1>🤖 Real AI Chatbot</h1>
 
 <div class="stats">
-<div>Mood: <span id="mood">Neutral</span></div>
-<div>Memory: <span id="memoryCount">0</span></div>
+<div>Connected AI</div>
+<div>Neural Engine Active</div>
 </div>
 
 <div id="chat"></div>
@@ -108,15 +114,12 @@ opacity:0.8;
 </div>
 
 </div>
+
 <script>
-
-let mood = 0; 
-// -100 angry, 0 neutral, +100 friendly
-
-let memory = [];
 
 const chat = document.getElementById("chat");
 
+// add message
 function addMsg(text, type){
 
 const div = document.createElement("div");
@@ -125,204 +128,59 @@ div.innerText = text;
 
 chat.appendChild(div);
 chat.scrollTop = chat.scrollHeight;
-
 }
 
-function updateStats(){
-document.getElementById("memoryCount").innerText = memory.length;
-
-let moodText = "Neutral";
-
-if(mood > 40) moodText = "Friendly";
-else if(mood > 10) moodText = "Calm";
-else if(mood < -40) moodText = "Angry";
-else if(mood < -10) moodText = "Annoyed";
-
-document.getElementById("mood").innerText = moodText;
-}
-
-// simple emotion detection
-function analyze(text){
-
-text = text.toLowerCase();
-
-let data = {
-positive: 0,
-negative: 0,
-question: false
-};
-
-if(text.includes("?")) data.question = true;
-
-const positiveWords = ["please","thanks","thank","good","nice","help"];
-const negativeWords = ["stupid","idiot","hate","useless","bad","shut"];
-
-positiveWords.forEach(w=>{
-if(text.includes(w)) data.positive++;
-});
-
-negativeWords.forEach(w=>{
-if(text.includes(w)) data.negative++;
-});
-
-return data;
-}
-
-// AI thinking core (we build logic next chunk)
-function think(userText){
-
-memory.push(userText);
-
-if(memory.length > 12){
-memory.shift();
-}
-
-const analysis = analyze(userText);
-
-// mood shifting
-mood += analysis.positive * 8;
-mood -= analysis.negative * 10;
-
-mood = Math.max(-100, Math.min(100, mood));
-
-updateStats();
-
-// TEMP RESPONSE (we upgrade this in chunk 3)
-setTimeout(()=>{
-
-const reply = generateResponse(userText);
-addMsg(reply, "ai");
-updateStats();
-}, 600);
-
-}
-
-function send(){
+// send message to API
+async function send(){
 
 const input = document.getElementById("input");
 const text = input.value.trim();
-
 if(!text) return;
 
 addMsg(text, "user");
-
 input.value = "";
 
-think(text);
+// loading indicator
+addMsg("thinking...", "ai");
+
+try {
+
+const res = await fetch("https://chatbot-api.ilikeart429.workers.dev/", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+messages: [
+{ role: "user", content: text }
+]
+})
+});
+
+const data = await res.json();
+
+// remove "thinking..."
+chat.removeChild(chat.lastChild);
+
+// show AI response
+addMsg(data.reply, "ai");
+
+} catch (err) {
+
+chat.removeChild(chat.lastChild);
+addMsg("AI error: check connection", "ai");
 
 }
 
+}
+
+// press Enter support
 document.getElementById("input")
-.addEventListener("keypress", e=>{
+.addEventListener("keypress", function(e){
 if(e.key === "Enter") send();
 });
-
-updateStats();
 
 </script>
 
 </body>
 </html>
-function generateResponse(text){
-
-const t = text.toLowerCase();
-
-// build “context awareness”
-const lastMemory = memory[memory.length - 2] || "";
-const analysis = analyze(text);
-
-// sarcasm level from mood
-let sarcasm = 0;
-
-if(mood < -30) sarcasm = 2;
-else if(mood < 0) sarcasm = 1;
-else sarcasm = 0;
-
-// memory reference chance
-let rememberChance = memory.length > 3 ? 0.3 : 0.1;
-
-let response = "";
-
-// --- QUESTION HANDLING ---
-if(t.includes("?")){
-
-if(mood < -40){
-response = "Why are you asking me that?";
-}
-
-else if(mood < 0){
-response = "I could answer... but I don’t feel like it.";
-}
-
-else if(mood < 40){
-response = "Hmm... interesting question. Let me think.";
-}
-
-else{
-response = "Sure. That’s actually a good question.";
-}
-
-}
-
-// --- NEGATIVE INPUT ---
-else if(analysis.negative > 0){
-
-if(mood < -50){
-response = "You’re really annoying me now.";
-}
-else{
-response = "That’s not very nice.";
-}
-
-mood -= 5;
-
-}
-
-// --- POSITIVE INPUT ---
-else if(analysis.positive > 0){
-
-if(mood > 50){
-response = "I appreciate that. It’s rare.";
-}
-else{
-response = "…okay.";
-}
-
-mood += 3;
-
-}
-
-// --- NORMAL CHAT ---
-else{
-
-const generic = [
-"I see.",
-"Interesting.",
-"Go on.",
-"Explain more.",
-"Hmm."
-];
-
-response = generic[Math.floor(Math.random()*generic.length)];
-
-}
-
-// --- MEMORY INJECTION (makes it feel alive) ---
-if(Math.random() < rememberChance && memory.length > 1){
-
-response += " Earlier you said: \"" + lastMemory + "\"";
-
-}
-
-// --- SARCASTIC FILTER ---
-if(sarcasm === 2 && Math.random() < 0.5){
-response = "Yeah sure. That totally makes sense.";
-}
-
-else if(sarcasm === 1 && Math.random() < 0.3){
-response = response + " ...I guess.";
-}
-
-return response;
-}
-  
