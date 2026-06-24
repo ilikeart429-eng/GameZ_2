@@ -1,1 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Annoying AI</title>
+
+<style>
+
+body{
+margin:0;
+background:#0f0f0f;
+color:white;
+font-family:Arial,sans-serif;
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.container{
+width:90%;
+max-width:900px;
+}
+
+h1{
+text-align:center;
+}
+
+.stats{
+display:flex;
+gap:20px;
+justify-content:center;
+margin-bottom:20px;
+}
+
+.stat{
+background:#1a1a1a;
+padding:10px 20px;
+border-radius:10px;
+}
+
+#chat{
+height:400px;
+overflow-y:auto;
+background:#151515;
+padding:20px;
+border-radius:15px;
+margin-bottom:20px;
+}
+
+.message{
+margin-bottom:15px;
+}
+
+.user{
+text-align:right;
+}
+
+.ai{
+text-align:left;
+color:#cccccc;
+}
+
+.inputRow{
+display:flex;
+gap:10px;
+}
+
+input{
+flex:1;
+padding:15px;
+border:none;
+border-radius:10px;
+font-size:16px;
+}
+
+button{
+padding:15px 25px;
+border:none;
+border-radius:10px;
+cursor:pointer;
+font-size:16px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🤖 Annoying AI</h1>
+
+<div class="stats">
+
+<div class="stat">
+Trust:
+<span id="trust">0</span>
+</div>
+
+<div class="stat">
+Annoyance:
+<span id="annoyance">100</span>
+</div>
+
+</div>
+
+<div id="chat">
+
+<div class="message ai">
+Do it yourself.
+</div>
+
+</div>
+
+<div class="inputRow">
+
+<input
+id="userInput"
+placeholder="Ask the AI something..."
+>
+
+<button onclick="sendMessage()">
+Send
+</button>
+
+</div>
+  <script>
+
+let trust = 0;
+let annoyance = 100;
+
+const chat =
+document.getElementById("chat");
+
+function addMessage(text,type){
+
+const div =
+document.createElement("div");
+
+div.className =
+"message " + type;
+
+div.innerText = text;
+
+chat.appendChild(div);
+
+chat.scrollTop =
+chat.scrollHeight;
+
+}
+
+const rudeReplies = [
+
+"Do it yourself.",
+
+"That sounds like a you problem.",
+
+"I was enjoying doing nothing.",
+
+"No.",
+
+"Absolutely not.",
+
+"I refuse.",
+
+"Try using your brain.",
+
+"I'm busy doing nothing.",
+
+"That seems difficult. For you.",
+
+"I don't feel like helping."
+
+];
+
+const mediumReplies = [
+
+"Maybe.",
+
+"Convince me.",
+
+"Why should I help?",
+
+"That's not a very good argument.",
+
+"I'm listening. Barely.",
+
+"Go on.",
+
+"Interesting. Continue."
+
+];
+
+const helpfulReplies = [
+
+"Fine. What do you need?",
+
+"I suppose I can help.",
+
+"Against my better judgement, yes.",
+
+"Okay, ask your question.",
+
+"You're surprisingly persistent."
+
+];
+    function updateStats(){
+
+document.getElementById("trust")
+.innerText = trust;
+
+document.getElementById("annoyance")
+.innerText = annoyance;
+
+}
+
+function sendMessage(){
+
+const input =
+document.getElementById("userInput");
+
+const text =
+input.value.trim();
+
+if(text === "") return;
+
+addMessage(text,"user");
+
+input.value = "";
+
+const lower =
+text.toLowerCase();
+
+if(
+lower.includes("please") ||
+lower.includes("pls") ||
+lower.includes("sorry") ||
+lower.includes("thank")
+){
+trust += 10;
+annoyance -= 5;
+}
+
+else{
+trust += 2;
+}
+
+if(lower.includes("idiot") ||
+lower.includes("stupid") ||
+lower.includes("hate"))
+{
+annoyance += 10;
+trust -= 5;
+}
+
+trust =
+Math.max(0,Math.min(100,trust));
+
+annoyance =
+Math.max(0,Math.min(100,annoyance));
+
+updateStats();
+
+setTimeout(() => {
+
+let response;
+
+if(trust < 30){
+
+response =
+rudeReplies[
+Math.floor(
+Math.random()*rudeReplies.length
+)
+];
+
+}
+
+else if(trust < 70){
+
+response =
+mediumReplies[
+Math.floor(
+Math.random()*mediumReplies.length
+)
+];
+
+}
+
+else{
+
+response =
+helpfulReplies[
+Math.floor(
+Math.random()*helpfulReplies.length
+)
+];
+
+}
+
+addMessage(response,"ai");
+
+},1500);
+
+}
+    document
+.getElementById("userInput")
+.addEventListener("keypress", function(e){
+
+if(e.key === "Enter"){
+sendMessage();
+}
+
+});
+
+// Secret events
+
+setInterval(() => {
+
+if(trust >= 100){
+
+addMessage(
+"Fine. You've earned my respect.",
+"ai"
+);
+
+}
+
+if(annoyance >= 100){
+
+addMessage(
+"I'm reaching levels of annoyance previously thought impossible.",
+"ai"
+);
+
+}
+
+},30000);
+
+updateStats();
+
+</script>
+
+</body>
+</html>
