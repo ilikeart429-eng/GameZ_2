@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Chat Game</title>
+<title>AI Game</title>
 
 <style>
 body{
@@ -17,10 +17,7 @@ align-items:center;
 height:100vh;
 }
 
-.container{
-width:90%;
-max-width:800px;
-}
+.container{width:90%;max-width:800px;}
 
 #chat{
 height:400px;
@@ -31,34 +28,14 @@ border-radius:10px;
 margin-bottom:10px;
 }
 
-.msg{
-margin:10px 0;
-padding:10px;
-border-radius:8px;
-max-width:80%;
-}
-
+.msg{margin:10px 0;padding:10px;border-radius:8px;max-width:80%;}
 .user{background:#333;margin-left:auto;text-align:right;}
 .ai{background:#1a1a1a;}
 
-input{
-width:75%;
-padding:12px;
-border:none;
-border-radius:8px;
-}
+input{width:75%;padding:12px;border:none;border-radius:8px;}
+button{padding:12px;border:none;border-radius:8px;}
 
-button{
-padding:12px;
-border:none;
-border-radius:8px;
-cursor:pointer;
-}
-
-.row{
-display:flex;
-gap:10px;
-}
+.row{display:flex;gap:10px;}
 </style>
 </head>
 
@@ -77,60 +54,57 @@ gap:10px;
 
 <script>
 
-const chat = document.getElementById("chat");
+const chat=document.getElementById("chat");
 
-function add(text, cls){
-const div = document.createElement("div");
-div.className = "msg " + cls;
-div.innerText = text;
-chat.appendChild(div);
-chat.scrollTop = chat.scrollHeight;
+let mood = Number(localStorage.getItem("aiMood") || 0);
+
+function add(text,cls){
+let d=document.createElement("div");
+d.className="msg "+cls;
+d.innerText=text;
+chat.appendChild(d);
+chat.scrollTop=chat.scrollHeight;
 }
 
-async function send(){
+function getStyle(){
+if(mood<=-50) return "angry";
+if(mood<0) return "annoyed";
+if(mood<50) return "neutral";
+return "friendly";
+}
 
-const input = document.getElementById("input");
-const text = input.value.trim();
-if(!text) return;
+function aiReply(){
+
+let style=getStyle();
+
+if(style==="angry") return "Leave me alone.";
+if(style==="annoyed") return "What now?";
+if(style==="neutral") return "Hmm.";
+return "Hey :)";
+
+}
+
+function send(){
+
+let input=document.getElementById("input");
+let text=input.value.trim();
+if(!text)return;
 
 add(text,"user");
-input.value = "";
+input.value="";
 
-// loading
-add("thinking...","ai");
+setTimeout(()=>{
 
-try{
+mood = Number(localStorage.getItem("aiMood") || 0);
+add(aiReply(),"ai");
 
-const res = await fetch("https://chatbot-api.ilikeart429.workers.dev", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({
-messages: [
-{ role: "user", content: text }
-]
-})
-});
-
-const data = await res.json();
-
-chat.removeChild(chat.lastChild);
-
-add(data.reply,"ai");
-
-}catch(e){
-
-chat.removeChild(chat.lastChild);
-add("Error connecting AI","ai");
-
-}
+},500);
 
 }
 
 document.getElementById("input")
 .addEventListener("keydown",e=>{
-if(e.key==="Enter") send();
+if(e.key==="Enter")send();
 });
 
 </script>
