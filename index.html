@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>GameZ_2</title>
 
 <style>
-
 body{
 margin:0;
-font-family:Arial,sans-serif;
+font-family:Arial;
 background:#0f0f0f;
 color:white;
-height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+height:100vh;
 }
 
 .container{
@@ -27,66 +24,136 @@ max-width:900px;
 }
 
 h1{
-font-size:70px;
+font-size:60px;
 margin-bottom:10px;
 }
 
 p{
 color:#aaa;
-margin-bottom:40px;
+margin-bottom:30px;
 }
 
 .games{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
 gap:20px;
 }
 
 .card{
 background:#1a1a1a;
-padding:30px;
-border-radius:20px;
+padding:25px;
+border-radius:15px;
 cursor:pointer;
-transition:0.3s;
-border:2px solid #2a2a2a;
+transition:0.2s;
 }
 
 .card:hover{
-transform:translateY(-5px);
-border-color:white;
+transform:scale(1.05);
 }
 
-.card h2{
-margin-bottom:10px;
+#adminBtn{
+position:fixed;
+top:10px;
+right:10px;
+background:#222;
+padding:8px 12px;
+border-radius:8px;
+cursor:pointer;
+font-size:12px;
+opacity:0.6;
 }
 
+#adminBtn:hover{
+opacity:1;
+}
+
+#adminPanel{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+display:none;
+justify-content:center;
+align-items:center;
+}
+
+.box{
+background:#111;
+padding:20px;
+border-radius:10px;
+width:300px;
+text-align:center;
+}
+
+input{
+width:80%;
+padding:10px;
+margin:10px 0;
+border-radius:8px;
+border:none;
+}
+
+button{
+padding:10px;
+margin:5px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
 </style>
-
 </head>
 
 <body>
 
+<!-- ADMIN BUTTON -->
+<div id="adminBtn" onclick="openAdmin()">Admin</div>
+
+<!-- ADMIN PANEL -->
+<div id="adminPanel">
+  <div class="box">
+    <h2>Developer Mode</h2>
+
+    <input id="codeInput" placeholder="Enter code">
+
+    <br>
+
+    <button onclick="checkCode()">Unlock</button>
+
+    <p id="adminMsg"></p>
+
+    <hr>
+
+    <button onclick="setMood(100)">😊 AI Happy</button>
+    <button onclick="setMood(0)">😐 Neutral</button>
+    <button onclick="setMood(-100)">😡 Angry</button>
+
+    <br><br>
+
+    <button onclick="unlockAll()">Unlock All Games</button>
+    <button onclick="closeAdmin()">Close</button>
+  </div>
+</div>
+
+<!-- MAIN PAGE -->
 <div class="container">
 
 <h1>GameZ_2</h1>
-
 <p>Neal.fun-style mini games</p>
 
 <div class="games">
 
 <div class="card" onclick="openGame('button')">
-<h2>🎯 Don't Click The Button</h2>
-<p>It gets worse every click.</p>
+🎯 Don't Click The Button
 </div>
 
 <div class="card" onclick="openGame('ai')">
-<h2>🤖 Annoying AI</h2>
-<p>It refuses to help you.</p>
+🤖 Annoying AI
 </div>
 
 <div class="card" onclick="openGame('time')">
-<h2>🌌 Time Explorer</h2>
-<p>Coming soon...</p>
+🌌 Time Explorer
 </div>
 
 </div>
@@ -94,6 +161,9 @@ margin-bottom:10px;
 </div>
 
 <script>
+
+let devMode = false;
+let mood = 0;
 
 function openGame(game){
 
@@ -104,10 +174,58 @@ window.location.href = "button.html";
 if(game === "ai"){
 window.location.href = "ai.html";
 }
-  
+
 if(game === "time"){
 window.location.href = "time.html";
 }
+
+}
+
+// ADMIN SYSTEM
+function openAdmin(){
+document.getElementById("adminPanel").style.display = "flex";
+}
+
+function closeAdmin(){
+document.getElementById("adminPanel").style.display = "none";
+}
+
+function checkCode(){
+
+const code = document.getElementById("codeInput").value;
+
+if(code === "quandel"){
+devMode = true;
+document.getElementById("adminMsg").innerText = "DEV MODE ACTIVATED";
+}
+else{
+document.getElementById("adminMsg").innerText = "Wrong code";
+}
+
+}
+
+function setMood(value){
+
+if(!devMode){
+alert("Not unlocked");
+return;
+}
+
+mood = value;
+
+alert("AI mood set to: " + mood);
+
+}
+
+function unlockAll(){
+
+if(!devMode){
+alert("Not unlocked");
+return;
+}
+
+alert("All games unlocked!");
+console.log("DEV MODE: everything unlocked");
 
 }
 
