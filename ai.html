@@ -101,12 +101,14 @@ add("thinking...","ai");
 
 try{
 
-const res = await fetch("https://chatbot-api.ilikeart429.workers.dev/", {
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-messages:[
-{role:"user",content:text}
+const res = await fetch("https://chatbot-api.ilikeart429.workers.dev", {
+method: "POST",
+headers: {
+"Content-Type": "application/json"
+},
+body: JSON.stringify({
+messages: [
+{ role: "user", content: text }
 ]
 })
 });
