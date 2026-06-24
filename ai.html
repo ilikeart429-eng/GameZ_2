@@ -1,113 +1,88 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Game</title>
-
-<style>
-body{
-margin:0;
-background:#0d0d0d;
-color:white;
-font-family:Arial;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
-
-.container{width:90%;max-width:800px;}
-
-#chat{
-height:400px;
-overflow-y:auto;
-background:#151515;
-padding:15px;
-border-radius:10px;
-margin-bottom:10px;
-}
-
-.msg{margin:10px 0;padding:10px;border-radius:8px;max-width:80%;}
-.user{background:#333;margin-left:auto;text-align:right;}
-.ai{background:#1a1a1a;}
-
-input{width:75%;padding:12px;border:none;border-radius:8px;}
-button{padding:12px;border:none;border-radius:8px;}
-
-.row{display:flex;gap:10px;}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<div id="chat"></div>
-
-<div class="row">
-<input id="input" placeholder="Talk to AI...">
-<button onclick="send()">Send</button>
-</div>
-
-</div>
-
 <script>
 
-const chat=document.getElementById("chat");
+const chat = document.getElementById("chat");
 
-let mood = Number(localStorage.getItem("aiMood") || 0);
+function add(text, cls){
 
-function add(text,cls){
-let d=document.createElement("div");
-d.className="msg "+cls;
-d.innerText=text;
-chat.appendChild(d);
-chat.scrollTop=chat.scrollHeight;
-}
+const div = document.createElement("div");
 
-function getStyle(){
-if(mood<=-50) return "angry";
-if(mood<0) return "annoyed";
-if(mood<50) return "neutral";
-return "friendly";
-}
+div.className = "msg " + cls;
 
-function aiReply(){
+div.innerText = text;
 
-let style=getStyle();
+chat.appendChild(div);
 
-if(style==="angry") return "Leave me alone.";
-if(style==="annoyed") return "What now?";
-if(style==="neutral") return "Hmm.";
-return "Hey :)";
+chat.scrollTop = chat.scrollHeight;
 
 }
 
-function send(){
+async function send(){
 
-let input=document.getElementById("input");
-let text=input.value.trim();
-if(!text)return;
+const input = document.getElementById("input");
+
+const text = input.value.trim();
+
+if(!text) return;
 
 add(text,"user");
-input.value="";
 
-setTimeout(()=>{
+input.value = "";
 
-mood = Number(localStorage.getItem("aiMood") || 0);
-add(aiReply(),"ai");
+add("Thinking...","ai");
 
-},500);
+try{
+
+const mood =
+Number(localStorage.getItem("aiMood") || 0);
+
+const res = await fetch(
+"https://chatbot-api.ilikeart429.workers.dev",
+{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+mood:mood,
+messages:[
+{
+role:"user",
+content:text
+}
+]
+})
+}
+);
+
+const data = await res.json();
+
+chat.removeChild(chat.lastChild);
+
+add(data.reply || "No response","ai");
+
+}
+catch(error){
+
+chat.removeChild(chat.lastChild);
+
+add("AI connection failed.","ai");
+
+console.error(error);
 
 }
 
-document.getElementById("input")
-.addEventListener("keydown",e=>{
-if(e.key==="Enter")send();
+}
+
+document
+.getElementById("input")
+.addEventListener("keydown", e => {
+
+if(e.key === "Enter"){
+send();
+}
+
 });
 
-</script>
+add("Hello. I'm connected to the AI.","ai");
 
-</body>
-</html>
+</script>
