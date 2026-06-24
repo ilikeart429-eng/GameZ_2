@@ -3,95 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Neural AI Chat</title>
+<title>AI Chat Game</title>
 
 <style>
-
 body{
 margin:0;
 background:#0d0d0d;
 color:white;
-font-family:Arial,sans-serif;
-height:100vh;
+font-family:Arial;
 display:flex;
 justify-content:center;
 align-items:center;
+height:100vh;
 }
 
 .container{
 width:90%;
-max-width:900px;
-}
-
-h1{
-text-align:center;
-margin-bottom:10px;
+max-width:800px;
 }
 
 #chat{
-height:420px;
+height:400px;
 overflow-y:auto;
 background:#151515;
 padding:15px;
-border-radius:12px;
-margin-bottom:15px;
+border-radius:10px;
+margin-bottom:10px;
 }
 
 .msg{
 margin:10px 0;
 padding:10px;
-border-radius:10px;
+border-radius:8px;
 max-width:80%;
-word-wrap:break-word;
 }
 
-.user{
-background:#2a2a2a;
-margin-left:auto;
-text-align:right;
-}
-
-.ai{
-background:#1a1a1a;
-margin-right:auto;
-color:#ddd;
-}
-
-.inputRow{
-display:flex;
-gap:10px;
-}
+.user{background:#333;margin-left:auto;text-align:right;}
+.ai{background:#1a1a1a;}
 
 input{
-flex:1;
-padding:15px;
+width:75%;
+padding:12px;
 border:none;
-border-radius:10px;
-font-size:16px;
-background:#222;
-color:white;
-outline:none;
+border-radius:8px;
 }
 
 button{
-padding:15px 20px;
+padding:12px;
 border:none;
-border-radius:10px;
+border-radius:8px;
 cursor:pointer;
-background:white;
-color:black;
-font-weight:bold;
 }
 
-.stats{
+.row{
 display:flex;
-justify-content:space-between;
-margin-bottom:10px;
-font-size:13px;
-opacity:0.7;
+gap:10px;
 }
-
 </style>
 </head>
 
@@ -99,17 +66,10 @@ opacity:0.7;
 
 <div class="container">
 
-<h1>🤖 Real AI Chatbot</h1>
-
-<div class="stats">
-<div>Connected AI</div>
-<div>Neural Engine Active</div>
-</div>
-
 <div id="chat"></div>
 
-<div class="inputRow">
-<input id="input" placeholder="Talk to the AI...">
+<div class="row">
+<input id="input" placeholder="Talk to AI...">
 <button onclick="send()">Send</button>
 </div>
 
@@ -119,65 +79,56 @@ opacity:0.7;
 
 const chat = document.getElementById("chat");
 
-// add message
-function addMsg(text, type){
-
+function add(text, cls){
 const div = document.createElement("div");
-div.className = "msg " + type;
+div.className = "msg " + cls;
 div.innerText = text;
-
 chat.appendChild(div);
 chat.scrollTop = chat.scrollHeight;
 }
 
-// send message to API
 async function send(){
 
 const input = document.getElementById("input");
 const text = input.value.trim();
 if(!text) return;
 
-addMsg(text, "user");
+add(text,"user");
 input.value = "";
 
-// loading indicator
-addMsg("thinking...", "ai");
+// loading
+add("thinking...","ai");
 
-try {
+try{
 
 const res = await fetch("https://chatbot-api.ilikeart429.workers.dev/", {
-method: "POST",
-headers: {
-"Content-Type": "application/json"
-},
-body: JSON.stringify({
-messages: [
-{ role: "user", content: text }
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+messages:[
+{role:"user",content:text}
 ]
 })
 });
 
 const data = await res.json();
 
-// remove "thinking..."
 chat.removeChild(chat.lastChild);
 
-// show AI response
-addMsg(data.reply, "ai");
+add(data.reply,"ai");
 
-} catch (err) {
+}catch(e){
 
 chat.removeChild(chat.lastChild);
-addMsg("AI error: check connection", "ai");
+add("Error connecting AI","ai");
 
 }
 
 }
 
-// press Enter support
 document.getElementById("input")
-.addEventListener("keypress", function(e){
-if(e.key === "Enter") send();
+.addEventListener("keydown",e=>{
+if(e.key==="Enter") send();
 });
 
 </script>
