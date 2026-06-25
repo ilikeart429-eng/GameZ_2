@@ -303,11 +303,11 @@ function resetView(){
 viewer.camera.flyTo({
 destination:
 Cesium.Cartesian3.fromDegrees(
-0,
-20,
-20000000
+lon,
+lat,
+500
 ),
-duration:1.5
+duration:2
 });
 
 document.getElementById("title").innerText =
