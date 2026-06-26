@@ -1,120 +1,255 @@
-<!DOCTYPE html>
 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>Time Explorer</title>
 
 <script src="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Cesium.js"></script>
 
-<link href="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+<link
+href="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css"
+rel="stylesheet">
 
 <style>
-html,body,#cesiumContainer{
+
+html,
+body,
+#viewer{
+
+margin:0;
 width:100%;
 height:100%;
-margin:0;
-padding:0;
 overflow:hidden;
 font-family:Arial;
+background:black;
+
+}
+
+#viewer{
+
+position:absolute;
+left:0;
+top:0;
+
 }
 
 #panel{
+
 position:absolute;
-top:10px;
-left:10px;
+top:15px;
+left:15px;
+
 width:340px;
-background:rgba(0,0,0,.85);
+
+background:rgba(15,15,25,.88);
+
 color:white;
-padding:15px;
-border-radius:12px;
-z-index:999;
+
+padding:18px;
+
+border-radius:14px;
+
+backdrop-filter:blur(12px);
+
+z-index:1000;
+
+box-shadow:0 0 20px rgba(0,0,0,.5);
+
 }
 
 #title{
-font-size:22px;
-margin-bottom:10px;
+
+font-size:28px;
+font-weight:bold;
+margin-bottom:12px;
+
 }
 
-#yearInput{
+#year{
+
 width:100%;
-padding:10px;
-box-sizing:border-box;
+padding:12px;
+font-size:18px;
+
 border:none;
+
 border-radius:8px;
+
+box-sizing:border-box;
+
 margin-bottom:10px;
+
 }
 
 button{
+
 width:100%;
-padding:10px;
+
+padding:12px;
+
+font-size:17px;
+
 border:none;
+
 border-radius:8px;
+
 cursor:pointer;
-margin-top:5px;
+
+margin-top:8px;
+
 }
 
-#desc{
-margin-top:10px;
-line-height:1.4;
-min-height:120px;
+button:hover{
+
+transform:scale(1.02);
+
 }
+
+#info{
+
+margin-top:15px;
+
+height:240px;
+
+overflow:auto;
+
+line-height:1.5;
+
+}
+
+#loading{
+
+display:none;
+
+margin-top:10px;
+
+color:#88cfff;
+
+}
+
 </style>
 
 </head>
 
 <body>
 
-<div id="cesiumContainer"></div>
+<div id="viewer"></div>
 
 <div id="panel">
 
-<div id="title">🌍 Time Explorer</div>
+<div id="title">
+🌍 Time Explorer
+</div>
 
 <input
-id="yearInput"
+id="year"
 type="number"
-placeholder="Enter a year..."
+placeholder="Enter any year...">
 
->
-
-<button onclick="travelYear()">
+<button id="travelButton">
 Travel Through Time
 </button>
 
-<div id="desc">
-Type a year like 1066, 1492, 1776, 1944, 2025, or 3000.
+<button id="resetButton">
+Reset Camera
+</button>
+
+<div id="loading">
+Loading...
 </div>
 
-<button onclick="resetView()">
-Reset View
-</button>
+<div id="info">
+
+Click anywhere on Earth.
+
+Soon you'll be able to zoom from
+
+Earth
+
+↓
+
+Country
+
+↓
+
+State
+
+↓
+
+City
+
+↓
+
+Street
+
+↓
+
+Building
+
+</div>
 
 </div>
 
 <script>
 
-Cesium.Ion.defaultAccessToken =
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTFiZTUwNi01YjQzLTRiMWEtOGE4Mi0wYWZiMWZlODIzYTEiLCJpZCI6NDQ4NjM2LCJzdWIiOiJmZ2hqIiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6IlRpbWUgRXhwbG9yZXIiLCJpYXQiOjE3ODIzMjcxMzB9.dEQ0gHTtI1KD2QKm3x2qDWap2n-pmzoNbC-EJegkDc0";
+//////////////////////////////////////////////////////////
 
-const viewer = new Cesium.Viewer("cesiumContainer",{
+// PUT YOUR CESIUM TOKEN HERE
+
+//////////////////////////////////////////////////////////
+
+Cesium.Ion.defaultAccessToken =
+"PASTE_YOUR_TOKEN_HERE";
+
+//////////////////////////////////////////////////////////
+
+const viewer =
+new Cesium.Viewer("viewer",{
+
 animation:false,
+
 timeline:false,
+
 baseLayerPicker:false,
-geocoder:false
+
+geocoder:false,
+
+sceneModePicker:false,
+
+navigationHelpButton:false,
+
+fullscreenButton:false,
+
+homeButton:false,
+
+terrainProvider:
+new Cesium.EllipsoidTerrainProvider()
+
 });
+
+//////////////////////////////////////////////////////////
 
 viewer.camera.setView({
+
 destination:
 Cesium.Cartesian3.fromDegrees(
+
 0,
+
 20,
-20000000
+
+22000000
+
 )
+
 });
 
-// Optional 3D buildings
+//////////////////////////////////////////////////////////
+
 (async()=>{
 
 try{
@@ -126,162 +261,533 @@ viewer.scene.primitives.add(buildings);
 
 }catch(e){
 
-console.log("Buildings unavailable");
+console.log("No buildings.");
 
 }
 
 })();
 
-function travelYear(){
+//////////////////////////////////////////////////////////
+
+const info =
+document.getElementById("info");
+
+const loading =
+document.getElementById("loading");
+
+const yearBox =
+document.getElementById("year");
+
+//////////////////////////////////////////////////////////
+
+function travel(){
 
 const year =
-parseInt(
-document.getElementById("yearInput").value
-);
+parseInt(yearBox.value);
 
 if(isNaN(year)){
-document.getElementById("desc").innerText =
-"Please enter a valid year.";
+
+info.innerHTML =
+"Enter a year.";
+
 return;
-}
-
-let text = "";
-
-if(year < -3000){
-
-text =
-"Prehistoric Earth. Early humans survive using stone tools.";
 
 }
-else if(year < -500){
 
-text =
-"Ancient civilizations rise. Egypt, Mesopotamia, and powerful kingdoms dominate.";
+info.innerHTML =
+"<h2>Year "+year+"</h2>";
 
-}
-else if(year < 500){
+if(year<0){
 
-text =
-"The Roman Empire influences much of Europe and the Mediterranean.";
+info.innerHTML +=
+"<p>Ancient civilizations shaped the world.</p>";
 
 }
-else if(year < 1000){
 
-text =
-"The early Middle Ages. Kingdoms rise and fall.";
+else if(year<1500){
 
-}
-else if(year < 1500){
-
-text =
-"Castles, knights, trade routes, and powerful rulers shape the medieval world.";
+info.innerHTML +=
+"<p>The medieval world is full of kingdoms and exploration.</p>";
 
 }
-else if(year < 1800){
 
-text =
-"The Age of Exploration. Oceans connect continents and empires expand.";
+else if(year<1900){
 
-}
-else if(year < 1900){
-
-text =
-"The Industrial Revolution transforms transportation and daily life.";
+info.innerHTML +=
+"<p>The Industrial Revolution transforms society.</p>";
 
 }
-else if(year < 1914){
 
-text =
-"The modern world grows rapidly through science and engineering.";
+else if(year<2020){
 
-}
-else if(year < 1919){
-
-text =
-"World War I changes the course of history.";
+info.innerHTML +=
+"<p>The modern world grows through science and technology.</p>";
 
 }
-else if(year < 1939){
 
-text =
-"The interwar years bring political and economic change.";
-
-}
-else if(year < 1946){
-
-text =
-"World War II affects nearly every part of the globe.";
-
-}
-else if(year < 1991){
-
-text =
-"The Cold War era. Space exploration begins.";
-
-}
-else if(year < 2020){
-
-text =
-"The Internet age connects billions of people.";
-
-}
-else if(year < 2050){
-
-text =
-"The AI era begins.";
-
-}
-else if(year < 3000){
-
-text =
-"The future unfolds with advanced technology and space travel.";
-
-}
 else{
 
-text =
-"The far future. Humanity's path is impossible to predict.";
+info.innerHTML +=
+"<p>The future is still unwritten.</p>";
 
 }
 
-document.getElementById("title").innerText =
-"🕒 Year " + year;
-
-document.getElementById("desc").innerText =
-text;
-
 }
 
-function resetView(){
+document
+.getElementById("travelButton")
+.onclick=travel;
 
-viewer.camera.flyTo({
-destination:
-Cesium.Cartesian3.fromDegrees(
-0,
-20,
-20000000
-),
-duration:2
-});
-
-document.getElementById("title").innerText =
-"🌍 Time Explorer";
-
-document.getElementById("desc").innerText =
-"Type a year like 1066, 1492, 1776, 1944, 2025, or 3000.";
-
-}
-
-document.getElementById("yearInput")
-.addEventListener("keydown",e=>{
+yearBox.addEventListener("keydown",e=>{
 
 if(e.key==="Enter"){
-travelYear();
+
+travel();
+
 }
 
 });
+
+document
+.getElementById("resetButton")
+.onclick=function(){
+
+viewer.camera.flyHome(2);
+
+};
+
+//////////////////////////////////////////////////////////
+
+// Part 2 will add:
+
+// ✔ Click Earth
+
+// ✔ Country detection
+
+// ✔ State detection
+
+// ✔ City detection
+
+// ✔ Street detection
+
+//////////////////////////////////////////////////////////
 
 </script>
 
 </body>
 </html>
+```
+```javascript
+//////////////////////////////////////////////////////////
+// CLICK TO ZOOM
+//////////////////////////////////////////////////////////
+
+const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
+
+handler.setInputAction(async function(click){
+
+const cartesian =
+viewer.camera.pickEllipsoid(click.position);
+
+if(!cartesian) return;
+
+const cartographic =
+Cesium.Cartographic.fromCartesian(cartesian);
+
+const lat =
+Cesium.Math.toDegrees(cartographic.latitude);
+
+const lon =
+Cesium.Math.toDegrees(cartographic.longitude);
+
+loading.style.display = "block";
+
+viewer.camera.flyTo({
+
+destination:
+Cesium.Cartesian3.fromDegrees(
+lon,
+lat,
+1500000
+),
+
+duration:2
+
+});
+
+try{
+
+const response =
+await fetch(
+`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+);
+
+const place =
+await response.json();
+
+const a = place.address || {};
+
+info.innerHTML = `
+<h2>Selected Location</h2>
+
+<b>Country:</b> ${a.country || "Unknown"}<br>
+<b>State:</b> ${a.state || "Unknown"}<br>
+<b>County:</b> ${a.county || "Unknown"}<br>
+<b>City:</b> ${a.city || a.town || a.village || "Unknown"}<br>
+<b>Suburb:</b> ${a.suburb || "Unknown"}<br>
+<b>Road:</b> ${a.road || "Unknown"}<br>
+
+<br>
+
+Latitude:
+${lat.toFixed(5)}
+
+<br>
+
+Longitude:
+${lon.toFixed(5)}
+
+`;
+
+}
+catch(err){
+
+info.innerHTML =
+"Unable to load location.";
+
+console.error(err);
+
+}
+
+loading.style.display = "none";
+
+},
+Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+//////////////////////////////////////////////////////////
+// SEARCH BOX (COMING NEXT)
+//////////////////////////////////////////////////////////
+
+function zoomTo(lat,lon,height=1200000){
+
+viewer.camera.flyTo({
+
+destination:
+Cesium.Cartesian3.fromDegrees(
+lon,
+lat,
+height
+),
+
+duration:2
+
+});
+
+}
+
+//////////////////////////////////////////////////////////
+// NICE CAMERA ROTATION
+//////////////////////////////////////////////////////////
+
+let rotating = true;
+
+viewer.clock.onTick.addEventListener(function(){
+
+if(rotating){
+
+viewer.scene.camera.rotate(
+Cesium.Cartesian3.UNIT_Z,
+0.00015
+);
+
+}
+
+});
+
+viewer.scene.canvas.addEventListener("mousedown",()=>{
+
+rotating=false;
+
+});
+
+//////////////////////////////////////////////////////////
+// WELCOME MESSAGE
+//////////////////////////////////////////////////////////
+
+info.innerHTML = `
+
+<h2>🌍 Welcome!</h2>
+
+Click anywhere on Earth.
+
+Current features:
+
+✅ 3D Globe
+
+✅ Type a Year
+
+✅ Click to Zoom
+
+✅ Country Detection
+
+✅ State Detection
+
+✅ City Detection
+
+Next update:
+
+⭐ Street Detection
+
+⭐ Wikipedia Photos
+
+⭐ Historical Images
+
+⭐ Building Explorer
+
+`;
+```
+```javascript
+//////////////////////////////////////////////////////////
+// PART 2 - SEARCH + WIKIPEDIA
+//////////////////////////////////////////////////////////
+
+// Create search box
+const search = document.createElement("input");
+
+search.placeholder = "Search any place...";
+search.style.width = "100%";
+search.style.padding = "10px";
+search.style.marginTop = "10px";
+search.style.borderRadius = "8px";
+search.style.border = "none";
+
+const panel =
+document.getElementById("panel");
+
+panel.insertBefore(
+search,
+document.getElementById("info")
+);
+
+search.addEventListener("keydown",e=>{
+
+if(e.key==="Enter"){
+
+searchPlace(search.value);
+
+}
+
+});
+
+//////////////////////////////////////////////////////////
+
+async function searchPlace(place){
+
+if(!place)return;
+
+loading.style.display="block";
+
+try{
+
+const geo =
+await fetch(
+"https://nominatim.openstreetmap.org/search?format=json&q="
++encodeURIComponent(place)
+);
+
+const results =
+await geo.json();
+
+if(results.length===0){
+
+info.innerHTML="Location not found.";
+
+loading.style.display="none";
+
+return;
+
+}
+
+const p=results[0];
+
+const lat=parseFloat(p.lat);
+
+const lon=parseFloat(p.lon);
+
+viewer.camera.flyTo({
+
+destination:
+Cesium.Cartesian3.fromDegrees(
+lon,
+lat,
+1200000
+),
+
+duration:2
+
+});
+
+await showWikipedia(place);
+
+}
+catch(err){
+
+console.error(err);
+
+info.innerHTML="Search failed.";
+
+}
+
+loading.style.display="none";
+
+}
+
+//////////////////////////////////////////////////////////
+
+async function showWikipedia(place){
+
+try{
+
+const wiki=
+await fetch(
+
+"https://en.wikipedia.org/api/rest_v1/page/summary/"
+
++encodeURIComponent(place)
+
+);
+
+const data=
+await wiki.json();
+
+let html="";
+
+html+="<h2>"+(data.title||place)+"</h2>";
+
+if(data.thumbnail){
+
+html+=
+"<img src='"+data.thumbnail.source+"' style='width:100%;border-radius:10px;margin-bottom:10px;'>";
+
+}
+
+html+="<p>";
+
+html+=
+data.extract||
+"No Wikipedia article found.";
+
+html+="</p>";
+
+info.innerHTML=html;
+
+}
+catch(e){
+
+info.innerHTML=
+"Couldn't load Wikipedia.";
+
+}
+
+}
+
+//////////////////////////////////////////////////////////
+
+// Improve click handling
+//////////////////////////////////////////////////////////
+
+handler.removeInputAction(
+Cesium.ScreenSpaceEventType.LEFT_CLICK
+);
+
+handler.setInputAction(async function(click){
+
+const cartesian=
+viewer.camera.pickEllipsoid(
+click.position
+);
+
+if(!cartesian)return;
+
+const cartographic=
+Cesium.Cartographic.fromCartesian(cartesian);
+
+const lat=
+Cesium.Math.toDegrees(
+cartographic.latitude
+);
+
+const lon=
+Cesium.Math.toDegrees(
+cartographic.longitude
+);
+
+viewer.camera.flyTo({
+
+destination:
+Cesium.Cartesian3.fromDegrees(
+lon,
+lat,
+500000
+),
+
+duration:2
+
+});
+
+loading.style.display="block";
+
+try{
+
+const geo=
+await fetch(
+
+`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+
+);
+
+const data=
+await geo.json();
+
+const a=data.address||{};
+
+const place=
+
+a.city||
+
+a.town||
+
+a.village||
+
+a.suburb||
+
+a.state||
+
+a.country||
+
+"Unknown";
+
+await showWikipedia(place);
+
+}
+catch(e){
+
+console.log(e);
+
+}
+
+loading.style.display="none";
+
+},
+Cesium.ScreenSpaceEventType.LEFT_CLICK);
+
+//////////////////////////////////////////////////////////
+
+// Part 3:
+//
+// ⭐ Street explorer
+// ⭐ Building explorer
+// ⭐ History by year
+// ⭐ Photo gallery
+//////////////////////////////////////////////////////////
+```
