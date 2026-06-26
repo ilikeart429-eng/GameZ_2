@@ -1,12 +1,14 @@
+Here is the full code — save it as world_explorer.html and open it in a browser (or upload to GitHub Pages):
+
 <!DOCTYPE html>
-<html lang=\"en\">
+<html lang="en">
 <head>
-<meta charset=\"UTF-8\">
-<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>World & Time Explorer</title>
 
-<script src=\"https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Cesium.js\"></script>
-<link href=\"https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css\" rel=\"stylesheet\">
+<script src="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Cesium.js"></script>
+<link href="https://cesium.com/downloads/cesiumjs/releases/1.118/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
 
 <style>
   html, body, #cesiumContainer {
@@ -150,7 +152,6 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* Crosshair tip */
   #tip {
     position: absolute;
     bottom: 14px;
@@ -178,40 +179,40 @@
 </head>
 <body>
 
-<div id=\"cesiumContainer\"></div>
+<div id="cesiumContainer"></div>
 
 <!-- Left: Time Explorer -->
-<div id=\"timePanel\">
-  <div id=\"title\">🌍 Time Explorer</div>
-  <input id=\"yearInput\" type=\"number\" placeholder=\"Enter a year...\">
-  <button onclick=\"travelYear()\">Travel Through Time</button>
-  <div id=\"desc\">
+<div id="timePanel">
+  <div id="title">🌍 Time Explorer</div>
+  <input id="yearInput" type="number" placeholder="Enter a year...">
+  <button onclick="travelYear()">Travel Through Time</button>
+  <div id="desc">
     Type a year like 1066, 1492, 1776, 1944, 2025, or 3000.
   </div>
-  <button id=\"resetBtn\" onclick=\"resetView()\">Reset View</button>
+  <button id="resetBtn" onclick="resetView()">Reset View</button>
 </div>
 
 <!-- Right: World Explorer (Wikipedia on click) -->
-<div id=\"worldPanel\">
+<div id="worldPanel">
   <h2>📖 World Explorer</h2>
-  <div class=\"hint\" id=\"worldHint\">
+  <div class="hint" id="worldHint">
     Click anywhere on the globe to zoom in and read a Wikipedia article about that place. Works for countries, cities, landmarks, streets and buildings.
   </div>
-  <div class=\"loader\" id=\"loader\"></div>
-  <div id=\"wikiPlace\"></div>
-  <div id=\"wikiTitle\"></div>
-  <img id=\"wikiImage\" alt=\"Wikipedia image\">
-  <div id=\"wikiExtract\"></div>
-  <a id=\"wikiLink\" href=\"#\" target=\"_blank\" rel=\"noopener\">Read full article on Wikipedia →</a>
+  <div class="loader" id="loader"></div>
+  <div id="wikiPlace"></div>
+  <div id="wikiTitle"></div>
+  <img id="wikiImage" alt="Wikipedia image">
+  <div id="wikiExtract"></div>
+  <a id="wikiLink" href="#" target="_blank" rel="noopener">Read full article on Wikipedia →</a>
 </div>
 
-<div id=\"tip\">🖱️ Click on the globe to explore</div>
+<div id="tip">🖱️ Click on the globe to explore</div>
 
 <script>
 Cesium.Ion.defaultAccessToken =
-  \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTFiZTUwNi01YjQzLTRiMWEtOGE4Mi0wYWZiMWZlODIzYTEiLCJpZCI6NDQ4NjM2LCJzdWIiOiJmZ2hqIiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6IlRpbWUgRXhwbG9yZXIiLCJpYXQiOjE3ODIzMjcxMzB9.dEQ0gHTtI1KD2QKm3x2qDWap2n-pmzoNbC-EJegkDc0\";
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJiYTFiZTUwNi01YjQzLTRiMWEtOGE4Mi0wYWZiMWZlODIzYTEiLCJpZCI6NDQ4NjM2LCJzdWIiOiJmZ2hqIiwiaXNzIjoiaHR0cHM6Ly9hcGkuY2VzaXVtLmNvbSIsImF1ZCI6IlRpbWUgRXhwbG9yZXIiLCJpYXQiOjE3ODIzMjcxMzB9.dEQ0gHTtI1KD2QKm3x2qDWap2n-pmzoNbC-EJegkDc0";
 
-const viewer = new Cesium.Viewer(\"cesiumContainer\", {
+const viewer = new Cesium.Viewer("cesiumContainer", {
   animation: false,
   timeline: false,
   baseLayerPicker: false,
@@ -234,39 +235,39 @@ viewer.camera.setView({
     const buildings = await Cesium.createOsmBuildingsAsync();
     viewer.scene.primitives.add(buildings);
   } catch (e) {
-    console.log(\"Buildings unavailable\");
+    console.log("Buildings unavailable");
   }
 })();
 
 /* =========================================================
-   TIME EXPLORER (unchanged behavior)
+   TIME EXPLORER
    ========================================================= */
 function travelYear() {
-  const year = parseInt(document.getElementById(\"yearInput\").value);
+  const year = parseInt(document.getElementById("yearInput").value);
   if (isNaN(year)) {
-    document.getElementById(\"desc\").innerText = \"Please enter a valid year.\";
+    document.getElementById("desc").innerText = "Please enter a valid year.";
     return;
   }
-  let text = \"\";
-  if (year < -3000) text = \"Prehistoric Earth. Early humans survive using stone tools.\";
-  else if (year < -500) text = \"Ancient civilizations rise. Egypt, Mesopotamia, and powerful kingdoms dominate.\";
-  else if (year < 500) text = \"The Roman Empire influences much of Europe and the Mediterranean.\";
-  else if (year < 1000) text = \"The early Middle Ages. Kingdoms rise and fall.\";
-  else if (year < 1500) text = \"Castles, knights, trade routes, and powerful rulers shape the medieval world.\";
-  else if (year < 1800) text = \"The Age of Exploration. Oceans connect continents and empires expand.\";
-  else if (year < 1900) text = \"The Industrial Revolution transforms transportation and daily life.\";
-  else if (year < 1914) text = \"The modern world grows rapidly through science and engineering.\";
-  else if (year < 1919) text = \"World War I changes the course of history.\";
-  else if (year < 1939) text = \"The interwar years bring political and economic change.\";
-  else if (year < 1946) text = \"World War II affects nearly every part of the globe.\";
-  else if (year < 1991) text = \"The Cold War era. Space exploration begins.\";
-  else if (year < 2020) text = \"The Internet age connects billions of people.\";
-  else if (year < 2050) text = \"The AI era begins.\";
-  else if (year < 3000) text = \"The future unfolds with advanced technology and space travel.\";
-  else text = \"The far future. Humanity's path is impossible to predict.\";
+  let text = "";
+  if (year < -3000) text = "Prehistoric Earth. Early humans survive using stone tools.";
+  else if (year < -500) text = "Ancient civilizations rise. Egypt, Mesopotamia, and powerful kingdoms dominate.";
+  else if (year < 500) text = "The Roman Empire influences much of Europe and the Mediterranean.";
+  else if (year < 1000) text = "The early Middle Ages. Kingdoms rise and fall.";
+  else if (year < 1500) text = "Castles, knights, trade routes, and powerful rulers shape the medieval world.";
+  else if (year < 1800) text = "The Age of Exploration. Oceans connect continents and empires expand.";
+  else if (year < 1900) text = "The Industrial Revolution transforms transportation and daily life.";
+  else if (year < 1914) text = "The modern world grows rapidly through science and engineering.";
+  else if (year < 1919) text = "World War I changes the course of history.";
+  else if (year < 1939) text = "The interwar years bring political and economic change.";
+  else if (year < 1946) text = "World War II affects nearly every part of the globe.";
+  else if (year < 1991) text = "The Cold War era. Space exploration begins.";
+  else if (year < 2020) text = "The Internet age connects billions of people.";
+  else if (year < 2050) text = "The AI era begins.";
+  else if (year < 3000) text = "The future unfolds with advanced technology and space travel.";
+  else text = "The far future. Humanity's path is impossible to predict.";
 
-  document.getElementById(\"title\").innerText = \"🕒 Year \" + year;
-  document.getElementById(\"desc\").innerText = text;
+  document.getElementById("title").innerText = "🕒 Year " + year;
+  document.getElementById("desc").innerText = text;
 }
 
 function resetView() {
@@ -274,50 +275,48 @@ function resetView() {
     destination: Cesium.Cartesian3.fromDegrees(0, 20, 20000000),
     duration: 2
   });
-  document.getElementById(\"title\").innerText = \"🌍 Time Explorer\";
-  document.getElementById(\"desc\").innerText =
-    \"Type a year like 1066, 1492, 1776, 1944, 2025, or 3000.\";
+  document.getElementById("title").innerText = "🌍 Time Explorer";
+  document.getElementById("desc").innerText =
+    "Type a year like 1066, 1492, 1776, 1944, 2025, or 3000.";
   clearWiki();
 }
 
-document.getElementById(\"yearInput\").addEventListener(\"keydown\", e => {
-  if (e.key === \"Enter\") travelYear();
+document.getElementById("yearInput").addEventListener("keydown", e => {
+  if (e.key === "Enter") travelYear();
 });
 
 /* =========================================================
    WORLD EXPLORER — click globe → zoom + Wikipedia article
    ========================================================= */
 
-const loaderEl = document.getElementById(\"loader\");
-const hintEl = document.getElementById(\"worldHint\");
-const titleEl = document.getElementById(\"wikiTitle\");
-const placeEl = document.getElementById(\"wikiPlace\");
-const imgEl = document.getElementById(\"wikiImage\");
-const extractEl = document.getElementById(\"wikiExtract\");
-const linkEl = document.getElementById(\"wikiLink\");
+const loaderEl = document.getElementById("loader");
+const hintEl = document.getElementById("worldHint");
+const titleEl = document.getElementById("wikiTitle");
+const placeEl = document.getElementById("wikiPlace");
+const imgEl = document.getElementById("wikiImage");
+const extractEl = document.getElementById("wikiExtract");
+const linkEl = document.getElementById("wikiLink");
 
 function clearWiki() {
-  titleEl.innerText = \"\";
-  placeEl.innerText = \"\";
-  extractEl.innerText = \"\";
-  imgEl.style.display = \"none\";
-  imgEl.src = \"\";
-  linkEl.style.display = \"none\";
-  hintEl.style.display = \"block\";
+  titleEl.innerText = "";
+  placeEl.innerText = "";
+  extractEl.innerText = "";
+  imgEl.style.display = "none";
+  imgEl.src = "";
+  linkEl.style.display = "none";
+  hintEl.style.display = "block";
 }
 
 function showLoader(on) {
-  loaderEl.style.display = on ? \"block\" : \"none\";
+  loaderEl.style.display = on ? "block" : "none";
 }
 
 // Reverse geocode using OpenStreetMap Nominatim (free, no key)
 async function reverseGeocode(lat, lon, zoom) {
   // zoom 18 = building level, 16 = street, 10 = city, 5 = country
   const url = `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lon}&zoom=${zoom}&addressdetails=1&accept-language=en`;
-  const res = await fetch(url, {
-    headers: { \"Accept\": \"application/json\" }
-  });
-  if (!res.ok) throw new Error(\"Geocoding failed\");
+  const res = await fetch(url, { headers: { "Accept": "application/json" } });
+  if (!res.ok) throw new Error("Geocoding failed");
   return res.json();
 }
 
@@ -327,7 +326,7 @@ async function fetchWikiSummary(title) {
   const res = await fetch(url);
   if (!res.ok) return null;
   const data = await res.json();
-  if (data.type === \"disambiguation\") return null;
+  if (data.type === "disambiguation") return null;
   return data;
 }
 
@@ -340,53 +339,42 @@ async function geoSearchWiki(lat, lon, radius = 10000) {
   return (data.query && data.query.geosearch) || [];
 }
 
-// Build a list of candidate titles from a Nominatim result, most specific first
+// Build candidate Wikipedia titles from Nominatim result, most specific first
 function candidateTitlesFromNominatim(geo) {
   const a = geo.address || {};
   const titles = [];
-
-  // Most specific name (POI / building)
   if (geo.namedetails && geo.namedetails.name) titles.push(geo.namedetails.name);
   if (geo.name) titles.push(geo.name);
-
-  // Address-derived candidates from specific → broad
   const keys = [
-    \"tourism\", \"historic\", \"building\", \"amenity\", \"leisure\",
-    \"road\", \"pedestrian\", \"neighbourhood\", \"suburb\",
-    \"village\", \"town\", \"city\", \"municipality\",
-    \"county\", \"state\", \"region\", \"country\"
+    "tourism", "historic", "building", "amenity", "leisure",
+    "road", "pedestrian", "neighbourhood", "suburb",
+    "village", "town", "city", "municipality",
+    "county", "state", "region", "country"
   ];
-  for (const k of keys) {
-    if (a[k]) titles.push(a[k]);
-  }
-
-  // Dedup, keep order
+  for (const k of keys) if (a[k]) titles.push(a[k]);
   return [...new Set(titles.filter(Boolean))];
 }
 
-// Pick best zoom level from Nominatim result type
+// Pick best zoom altitude from Nominatim result type
 function flyZoomForCategory(geo) {
-  const cls = (geo && geo.class) || \"\";
-  const type = (geo && geo.type) || \"\";
-  // building / address → very close
-  if (cls === \"building\" || cls === \"amenity\" || cls === \"tourism\" || cls === \"historic\" || cls === \"shop\") return 400;
-  if (cls === \"highway\" || type === \"residential\" || type === \"road\" || type === \"pedestrian\") return 1200;
-  if (cls === \"place\") {
-    if ([\"village\", \"hamlet\", \"suburb\", \"neighbourhood\"].includes(type)) return 4000;
-    if ([\"town\"].includes(type)) return 12000;
-    if ([\"city\"].includes(type)) return 30000;
-    if ([\"state\", \"region\", \"province\"].includes(type)) return 300000;
-    if ([\"country\"].includes(type)) return 1500000;
+  const cls = (geo && geo.class) || "";
+  const type = (geo && geo.type) || "";
+  if (cls === "building" || cls === "amenity" || cls === "tourism" || cls === "historic" || cls === "shop") return 400;
+  if (cls === "highway" || type === "residential" || type === "road" || type === "pedestrian") return 1200;
+  if (cls === "place") {
+    if (["village", "hamlet", "suburb", "neighbourhood"].includes(type)) return 4000;
+    if (["town"].includes(type)) return 12000;
+    if (["city"].includes(type)) return 30000;
+    if (["state", "region", "province"].includes(type)) return 300000;
+    if (["country"].includes(type)) return 1500000;
   }
-  if (cls === \"boundary\") {
-    if ([\"administrative\"].includes(type)) return 200000;
-  }
+  if (cls === "boundary" && type === "administrative") return 200000;
   return 8000;
 }
 
 async function exploreAt(lon, lat) {
   clearWiki();
-  hintEl.style.display = \"none\";
+  hintEl.style.display = "none";
   showLoader(true);
 
   try {
@@ -395,17 +383,12 @@ async function exploreAt(lon, lat) {
     for (const z of [18, 16, 14, 10, 5]) {
       try {
         const g = await reverseGeocode(lat, lon, z);
-        if (g && (g.name || g.display_name)) {
-          geo = g;
-          break;
-        }
-      } catch (e) {
-        // continue
-      }
+        if (g && (g.name || g.display_name)) { geo = g; break; }
+      } catch (e) { /* continue */ }
     }
 
-    const placeLabel = geo ? (geo.display_name || \"Unknown location\") : \"Unknown location\";
-    placeEl.innerText = \"📍 \" + placeLabel;
+    const placeLabel = geo ? (geo.display_name || "Unknown location") : "Unknown location";
+    placeEl.innerText = "📍 " + placeLabel;
 
     // Fly camera to that point at appropriate zoom
     const altitude = flyZoomForCategory(geo);
@@ -419,58 +402,49 @@ async function exploreAt(lon, lat) {
       duration: 1.8
     });
 
-    // Build candidate titles from address
+    // Build candidate titles from address and try each
     let candidates = geo ? candidateTitlesFromNominatim(geo) : [];
-
-    // Try each candidate against Wikipedia REST summary
     let wiki = null;
     for (const title of candidates) {
       const w = await fetchWikiSummary(title);
-      if (w && w.extract && w.extract.length > 40) {
-        wiki = w;
-        break;
-      }
+      if (w && w.extract && w.extract.length > 40) { wiki = w; break; }
     }
 
     // Fallback: nearest Wikipedia article via geosearch
     if (!wiki) {
       const nearby = await geoSearchWiki(lat, lon, 10000);
-      if (nearby.length > 0) {
-        wiki = await fetchWikiSummary(nearby[0].title);
-      }
+      if (nearby.length > 0) wiki = await fetchWikiSummary(nearby[0].title);
     }
     if (!wiki) {
       const nearby2 = await geoSearchWiki(lat, lon, 50000);
-      if (nearby2.length > 0) {
-        wiki = await fetchWikiSummary(nearby2[0].title);
-      }
+      if (nearby2.length > 0) wiki = await fetchWikiSummary(nearby2[0].title);
     }
 
     if (wiki) {
-      titleEl.innerText = wiki.title || \"\";
-      extractEl.innerText = wiki.extract || \"No description available.\";
+      titleEl.innerText = wiki.title || "";
+      extractEl.innerText = wiki.extract || "No description available.";
       if (wiki.thumbnail && wiki.thumbnail.source) {
         imgEl.src = wiki.thumbnail.source;
-        imgEl.style.display = \"block\";
+        imgEl.style.display = "block";
       }
       if (wiki.content_urls && wiki.content_urls.desktop && wiki.content_urls.desktop.page) {
         linkEl.href = wiki.content_urls.desktop.page;
-        linkEl.style.display = \"block\";
+        linkEl.style.display = "block";
       }
     } else {
-      titleEl.innerText = \"No Wikipedia article found\";
-      extractEl.innerText = \"Try clicking a more specific spot — a city, landmark, building, or named street.\";
+      titleEl.innerText = "No Wikipedia article found";
+      extractEl.innerText = "Try clicking a more specific spot — a city, landmark, building, or named street.";
     }
   } catch (e) {
     console.error(e);
-    titleEl.innerText = \"Something went wrong\";
-    extractEl.innerText = \"Could not load information for that location. Please try again.\";
+    titleEl.innerText = "Something went wrong";
+    extractEl.innerText = "Could not load information for that location. Please try again.";
   } finally {
     showLoader(false);
   }
 }
 
-// Hook up click handler on the globe
+// Click handler on the globe
 const handler = new Cesium.ScreenSpaceEventHandler(viewer.scene.canvas);
 handler.setInputAction(function (click) {
   const ray = viewer.camera.getPickRay(click.position);
@@ -481,7 +455,6 @@ handler.setInputAction(function (click) {
   const lat = Cesium.Math.toDegrees(cartographic.latitude);
   exploreAt(lon, lat);
 }, Cesium.ScreenSpaceEventType.LEFT_CLICK);
-
 </script>
 </body>
 </html>
